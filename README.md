@@ -67,7 +67,7 @@
 - Datums
 - Redeemer
 - Handling Time (Slots)
-- Simulating in Emulator
+- Simulating in CTL
 
 ## Episode 10 - A Vesting Contract (frontend)
 
