@@ -16,7 +16,7 @@
 - Introduction to PureScript
   - Why PureScript
   - Types
-  - Functions
+  - Functions and Currying
   - Infix Function Application
   - Function composition
   - Language Reference
@@ -48,7 +48,6 @@
 - The Validator
 - The Contract Monad
 - Simulating in Playground
-- Simulating in Emulator
 
 ## Episode 7 - Going Live
 
@@ -62,26 +61,29 @@
 - Building a web app to test the contract
 - Integrating with a Wallet
 
-## Episode 9 - A Vesting Contract
+## Episode 9 - A Vesting Contract (backend)
 
 - Script Contexts
 - Datums
 - Redeemer
-- Handling Time
+- Handling Time (Slots)
+- Simulating in Emulator
+
+## Episode 10 - A Vesting Contract (frontend)
+
+- Effect
+- Aff
+- Monad Transformers
 - Building the UI
 
-## Episode 10 - High Ground
+## Episode 11 - High Ground
 
 - Metaprogramming in Haskell
 - Parameterized contracts
 - Running the parameterized contract in CTL
 
-## Episode 11 - Native Tokens
-
+## Episode 12 - (Non/)Fungible Tokens
 - Values
 - Minting Policy
 - NFT's
-
-## Episode 12 - Vending Machine
-
-- Building a NFT Vending Machine
+- Building a NFT Minting website
