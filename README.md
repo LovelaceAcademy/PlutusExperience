@@ -12,8 +12,7 @@
 - Plutus Playground
   - Smart Contract Simulations
 
-## Episode 2 - PureScript S2 Nix
-
+## Episode 2 - PureScript Foundations
 - Introduction to PureScript
   - Why PureScript
   - Types
@@ -21,10 +20,11 @@
   - Infix Function Application
   - Function composition
   - Language Reference
-- Building a nix flake with PureScript
+- Try PureScript
 
 ## Episode 3 - Our First Web App
 
+- Building a Nix flake for a PureScript project
 - Algebric Data Types
 - High Kinded Types
 - Pattern Matching
@@ -44,7 +44,7 @@
 
 ## Episode 6 - Building Smart Contracts
 
-- Building the nix environment
+- Building a Nix flake for a Plutus project
 - The Validator
 - The Contract Monad
 - Simulating in Playground
@@ -58,7 +58,7 @@
 
 ## Episode 8 - Bring it on
 
-- Off-chain with Cardano-Transactino-Lib
+- Off-chain with Cardano-Transaction-Lib
 - Building a web app to test the contract
 - Integrating with a Wallet
 
