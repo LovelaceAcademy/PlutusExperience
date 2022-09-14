@@ -35,6 +35,8 @@ TODO: CTL Slides
 
 ## Donator integrates his wallet
 
+(14-09-17-53)
+
 ```bash
 cd episodes/08-bring-it-on
 nix flake init -t github:Plutonomicon/cardano-transaction-lib
