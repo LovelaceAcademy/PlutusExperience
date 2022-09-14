@@ -36,6 +36,7 @@ TODO: CTL Slides
 ## Donator integrates his wallet
 
 ```bash
+cd episodes/08-bring-it-on
 nix flake init -t github:Plutonomicon/cardano-transaction-lib
 git init
 git commit -a -m "Initial commit"
