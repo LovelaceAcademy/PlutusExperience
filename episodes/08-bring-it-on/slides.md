@@ -21,7 +21,7 @@ TODO: CTL Slides
 1. Donator integrates his wallet
 2. Donator locks `n` ADA into `Script Address`
 3. Visitor see avaliable `n` ADA 
-4. Visitor integrate its wallet
+4. Visitor integrates his wallet
 5. Visitor grabs all ADA
 
 ## Prerequisites
