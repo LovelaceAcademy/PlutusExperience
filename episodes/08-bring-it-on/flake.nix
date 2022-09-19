@@ -2,30 +2,41 @@
   inputs =
     {
       ctl.url = "github:LovelaceAcademy/cardano-transaction-lib";
-      nixpkgs.follows="ctl/nixpkgs";
+      nixpkgs.follows = "ctl/nixpkgs";
       ps-tools.follows = "purs-nix/ps-tools";
       purs-nix.url = "github:lovelaceAcademy/purs-nix";
       utils.url = "github:numtide/flake-utils";
     };
 
-  outputs = { nixpkgs, utils, ... }@inputs:
+  outputs = { nixpkgs, utils, ctl, ... }@inputs:
     utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" ]
       (system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
           ps-tools = inputs.ps-tools.legacyPackages.${system};
           purs-nix = inputs.purs-nix { inherit system; };
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              # Required by CTL
+              ctl.overlays.purescript
+              ctl.overlays.ctl-server
+              ctl.overlays.runtime
+            ];
+          };
           ps =
             purs-nix.purs
               {
+                # Use the compiler from CTL
+                purescript = pkgs.easy-ps.purescript;
                 dependencies =
                   with purs-nix.ps-pkgs;
-                  with purs-nix.ps-pkgs-ns.lovelaceAcademy;
+                  with purs-nix.ps-pkgs-ns;
                   [
+                    # PureScript dependencies here
                     console
                     effect
                     prelude
-                    cardano-transaction-lib
+                    lovelaceAcademy.cardano-transaction-lib
                   ];
 
                 dir = ./.;
@@ -43,9 +54,7 @@
                     entr
                     nodejs
                     (ps.command { })
-                    ps-tools.for-0_15.purescript-language-server
-                    purs-nix.esbuild
-                    purs-nix.purescript
+                    ps-tools.for-0_14.purescript-language-server
                   ];
 
                 shellHook =
