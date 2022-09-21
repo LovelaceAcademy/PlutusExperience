@@ -28,22 +28,20 @@
               {
                 # Use the compiler from CTL
                 purescript = pkgs.easy-ps.purescript;
-                dependencies =
-                  with purs-nix.ps-pkgs;
-                  with purs-nix.ps-pkgs-ns;
-                  [
-                    # PureScript dependencies here
-                    console
-                    effect
-                    prelude
-                    lovelaceAcademy.cardano-transaction-lib
-                  ];
-
+                # Project dir (src, test)
                 dir = ./.;
+                # Dependencies
+                dependencies =
+                  with purs-nix.ps-pkgs-ns.lovelaceAcademy;
+                  [
+                    cardano-transaction-lib
+                  ];
+                # FFI dependencies
+                # foreign.Main.node_modules = [];
               };
         in
         {
-          packages.default = ps.modules.Main.bundle { };
+          packages.default = ps.modules.Main.app { name = "bring-it-on"; };
 
           devShells.default =
             pkgs.mkShell

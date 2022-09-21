@@ -1,9 +1,13 @@
-module Main where
+module Main (main) where
 
-import Prelude
+import Contract.Prelude
 
-import Effect (Effect)
-import Effect.Console (log)
+import Contract.Config as Contract.Config
+import Contract.Monad as Contract.Monad
+import Scaffold as Scaffold
 
 main :: Effect Unit
-main = log "❄"
+main = Contract.Monad.launchAff_
+  $ void
+  $ Contract.Monad.runContract Contract.Config.testnetNamiConfig
+  $ Scaffold.contract
