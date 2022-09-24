@@ -1934,7 +1934,7 @@
       "inputs": {
         "ctl": "ctl",
         "nixpkgs": [
-          "ctl",
+          "purs-nix",
           "nixpkgs"
         ],
         "ps-tools": [
