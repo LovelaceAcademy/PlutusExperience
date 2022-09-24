@@ -1,1 +1,1 @@
-import('./result/Main/index.js').then(({main}) => main());
+import('./output/Main/index.js').then(({main}) => main());
