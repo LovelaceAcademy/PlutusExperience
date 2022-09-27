@@ -2,12 +2,12 @@
   inputs =
     {
       ctl.url = "github:LovelaceAcademy/cardano-transaction-lib";
+      nixpkgs.follows = "ctl/nixpkgs";
       purs-nix.url = "github:lovelaceAcademy/purs-nix";
-      nixpkgs.follows = "purs-nix/nixpkgs";
       utils.url = "github:numtide/flake-utils";
     };
 
-  outputs = { nixpkgs, utils, ctl, ... }@inputs:
+  outputs = { self, nixpkgs, utils, ctl, ... }@inputs:
     utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" ]
       (system:
         let
@@ -39,7 +39,12 @@
             };
         in
         {
-          packages.default = ps.modules.Main.output { };
+          packages = {
+            default = ps.modules.Main.output { };
+            runtime = pkgs.buildCtlRuntime { };
+          };
+
+          apps.default = pkgs.launchCtlRuntime { };
 
           devShells.default =
             pkgs.mkShell
@@ -50,8 +55,8 @@
                     entr
                     nodejs
                     (ps.command { })
-                    purs
                     easy-ps.purescript-language-server
+                    purs
                   ];
 
                 shellHook =
