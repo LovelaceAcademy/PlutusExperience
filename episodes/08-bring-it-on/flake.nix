@@ -39,10 +39,7 @@
             };
         in
         {
-          packages = {
-            default = ps.modules.Main.output { };
-            runtime = pkgs.buildCtlRuntime { };
-          };
+          packages.default = ps.modules.Main.output { };
 
           apps.default = pkgs.launchCtlRuntime { };
 
@@ -54,6 +51,7 @@
                   [
                     entr
                     nodejs
+                    nodePackages.http-server
                     (ps.command { })
                     easy-ps.purescript-language-server
                     purs
@@ -62,6 +60,7 @@
                 shellHook =
                   ''
                     alias watch="find src | entr -s 'echo building && purs-nix compile'"
+                    alias docs="purs-nix docs && http-server ./generated-docs/html -o"
                   '';
               };
         }
