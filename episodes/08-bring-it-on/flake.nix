@@ -51,17 +51,14 @@
                   [
                     entr
                     nodejs
-                    nodePackages.http-server
                     (ps.command { })
                     easy-ps.purescript-language-server
                     purs
                   ];
-
-                shellHook =
-                  ''
-                    alias watch="find src | entr -s 'echo building && purs-nix compile'"
-                    alias docs="purs-nix docs && http-server ./generated-docs/html -o"
-                  '';
+                shellHook = ''
+                  alias dev="npm run dev"
+                  alias bundle="npm run bundle"
+                '';
               };
         }
       );

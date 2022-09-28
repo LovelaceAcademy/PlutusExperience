@@ -1,10 +1,16 @@
 {
   "scripts": {
-    "dev": "BROWSER_RUNTIME=1 webpack-dev-server --progress",
+    "dev": "concurrently --kill-others npm:dev:webpack npm:dev:purs npm:dev:docs npm:dev:runtime",
+    "dev:purs": "find src | entr -s 'echo building && purs-nix compile'",
+    "dev:webpack": "BROWSER_RUNTIME=1 webpack-dev-server --progress --open",
+    "dev:runtime": "nix run",
+    "dev:docs": "purs-nix docs && http-server ./generated-docs/html -o",
     "bundle": "BROWSER_RUNTIME=1 webpack --mode=production"
   },
   "devDependencies": {
+    "concurrently": "^7.4.0",
     "html-webpack-plugin": "^5.5.0",
+    "http-server": "^14.1.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "webpack": "^5.67.0",
     "webpack-cli": "^4.10.0",
