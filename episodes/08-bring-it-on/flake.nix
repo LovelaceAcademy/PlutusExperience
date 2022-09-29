@@ -43,10 +43,9 @@
 
           devShells.default =
             let
-              runtimeConfig = { };
               prebuilt = (pkgs.arion.build {
                 inherit pkgs;
-                modules = [ (pkgs.buildCtlRuntime pkgs runtimeConfig) ];
+                modules = [ (pkgs.buildCtlRuntime { }) ];
               }).outPath;
               runtime = pkgs.writeShellApplication {
                 name = "runtime";
@@ -68,11 +67,18 @@
                     easy-ps.purescript-language-server
                     purs
                     runtime
+                    docker
                   ];
                 shellHook = ''
+                  alias inspect-ipc="docker volume inspect store_node-preprod-ipc"
                   alias dev="npm run dev"
                   alias bundle="npm run bundle"
-                  alias cardano-cli="runtime exec cardano-node cardano-cli"
+                  alias cardano-cli="docker run --rm -it -v "$(pwd)":/data -w /data -v store_node-preprod-ipc:/ipc -e CARDANO_NODE_SOCKET_PATH=/ipc/node.socket --entrypoint cardano-cli inputoutput/cardano-node"
+                  inspect-ipc
+                  if [ $? -gt 0 ]; then 
+                    echo "[WARN]: Cardano node volume not found, run \"dev\" first."
+                  fi;
+                  echo "[INFO]: testnet-magic for preprod is 1"
                 '';
               };
         }
