@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "concurrently --kill-others npm:dev:webpack npm:dev:purs npm:dev:docs npm:dev:runtime",
-    "dev:purs": "find src | entr -s 'echo building && purs-nix compile'",
+    "dev": "concurrently --handle-input --restart-tries 10 npm:dev:purs npm:dev:webpack npm:dev:docs npm:dev:runtime",
+    "dev:purs": "purs-watch",
     "dev:webpack": "BROWSER_RUNTIME=1 webpack serve --progress --open",
     "dev:runtime": "runtime up",
     "dev:docs": "purs-nix docs && http-server ./generated-docs/html -o",

@@ -37,6 +37,7 @@
               # FFI dependencies
               # foreign.Main.node_modules = [];
             };
+          ps-command = ps.command { };
         in
         {
           packages.default = ps.modules.Main.output { };
@@ -55,17 +56,30 @@
                     ${pkgs.arion}/bin/arion --prebuilt-file ${prebuilt} "$@"
                   '';
               };
+              purs-watch = pkgs.writeShellApplication {
+                name = "purs-watch";
+                runtimeInputs = with pkgs; [ entr ps-command ];
+
+                text =
+                  ''
+                    while true; do
+                      find src | entr -sz 'echo building && purs-nix compile'
+                      echo "enter to try again"
+                      read -r -n1
+                    done
+                  '';
+              };
             in
             pkgs.mkShell
               {
                 packages =
                   with pkgs;
                   [
-                    entr
                     nodejs
-                    (ps.command { })
                     easy-ps.purescript-language-server
                     purs
+                    ps-command
+                    purs-watch
                     runtime
                     docker
                   ];
