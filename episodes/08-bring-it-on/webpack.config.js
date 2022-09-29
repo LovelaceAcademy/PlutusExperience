@@ -25,6 +25,10 @@ module.exports = {
     port: 4008,
   },
 
+  watchOptions: {
+    aggregateTimeout: 5000
+  },
+
   // we can add more entrypoints as needed
   entry: "./index.js",
 
