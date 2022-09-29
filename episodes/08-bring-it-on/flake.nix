@@ -59,15 +59,16 @@
               purs-watch = pkgs.writeShellApplication {
                 name = "purs-watch";
                 runtimeInputs = with pkgs; [ entr ps-command ];
+                text = "find src | entr -s 'echo building && purs-nix compile'";
+              };
+              cardano-cli = pkgs.writeShellApplication {
+                name = "cardano-cli";
+                runtimeInputs = with pkgs; [ docker ];
 
-                text =
-                  ''
-                    while true; do
-                      find src | entr -sz 'echo building && purs-nix compile'
-                      echo "enter to try again"
-                      read -r -n1
-                    done
-                  '';
+                text = ''
+                  docker volume inspect store_node-preprod-ipc || echo "[WARN]: Cardano node volume not found, run \"dev\" first."
+                  docker run --rm -it -v "$(pwd)":/data -w /data -v store_node-preprod-ipc:/ipc -e CARDANO_NODE_SOCKET_PATH=/ipc/node.socket --entrypoint cardano-cli "inputoutput/cardano-node" "$@"
+                '';
               };
             in
             pkgs.mkShell
@@ -82,16 +83,11 @@
                     purs-watch
                     runtime
                     docker
+                    cardano-cli
                   ];
                 shellHook = ''
-                  alias inspect-ipc="docker volume inspect store_node-preprod-ipc"
                   alias dev="npm run dev"
                   alias bundle="npm run bundle"
-                  alias cardano-cli="docker run --rm -it -v "$(pwd)":/data -w /data -v store_node-preprod-ipc:/ipc -e CARDANO_NODE_SOCKET_PATH=/ipc/node.socket --entrypoint cardano-cli inputoutput/cardano-node"
-                  inspect-ipc
-                  if [ $? -gt 0 ]; then 
-                    echo "[WARN]: Cardano node volume not found, run \"dev\" first."
-                  fi;
                   echo "[INFO]: testnet-magic for preprod is 1"
                 '';
               };
