@@ -3,7 +3,7 @@
     "dev": "concurrently --kill-others npm:dev:webpack npm:dev:purs npm:dev:docs npm:dev:runtime",
     "dev:purs": "find src | entr -s 'echo building && purs-nix compile'",
     "dev:webpack": "BROWSER_RUNTIME=1 webpack-dev-server --progress --open",
-    "dev:runtime": "nix run",
+    "dev:runtime": "runtime up",
     "dev:docs": "purs-nix docs && http-server ./generated-docs/html -o",
     "bundle": "BROWSER_RUNTIME=1 webpack --mode=production"
   },

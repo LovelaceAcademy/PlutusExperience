@@ -41,9 +41,22 @@
         {
           packages.default = ps.modules.Main.output { };
 
-          apps.default = pkgs.launchCtlRuntime { };
-
           devShells.default =
+            let
+              runtimeConfig = { };
+              prebuilt = (pkgs.arion.build {
+                inherit pkgs;
+                modules = [ (pkgs.buildCtlRuntime pkgs runtimeConfig) ];
+              }).outPath;
+              runtime = pkgs.writeShellApplication {
+                name = "runtime";
+                runtimeInputs = [ pkgs.arion pkgs.docker ];
+                text =
+                  ''
+                    ${pkgs.arion}/bin/arion --prebuilt-file ${prebuilt} "$@"
+                  '';
+              };
+            in
             pkgs.mkShell
               {
                 packages =
@@ -54,10 +67,12 @@
                     (ps.command { })
                     easy-ps.purescript-language-server
                     purs
+                    runtime
                   ];
                 shellHook = ''
                   alias dev="npm run dev"
                   alias bundle="npm run bundle"
+                  alias cardano-cli="runtime exec cardano-node cardano-cli"
                 '';
               };
         }

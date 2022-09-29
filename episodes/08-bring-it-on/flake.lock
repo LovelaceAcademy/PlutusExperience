@@ -431,11 +431,11 @@
         "purs-nix": "purs-nix"
       },
       "locked": {
-        "lastModified": 1664376738,
-        "narHash": "sha256-QCZcXNpbG6VbAlEPiK6kH7PeYE+uqWvRG8HdLDcL3mw=",
+        "lastModified": 1664402590,
+        "narHash": "sha256-kj5TVHTuq35H+CYAxjvZXdnQGKeQneiOVhufdkJVKaI=",
         "owner": "LovelaceAcademy",
         "repo": "cardano-transaction-lib",
-        "rev": "790bd5963a5b3e4c231b83288c91f632a2d6101e",
+        "rev": "216143557f1290127817dd6a142eb413f6c3df93",
         "type": "github"
       },
       "original": {
@@ -2372,11 +2372,11 @@
         "utils": "utils_8"
       },
       "locked": {
-        "lastModified": 1664376757,
-        "narHash": "sha256-7H1PlJiI/tnLiJSGxtad9oKhfdp+rYEJVnHs4H0WpwM=",
+        "lastModified": 1664402613,
+        "narHash": "sha256-iI0GPKRIGuNZwANWLOrv8dlhh5mkFdhbqY8b4wVW8zg=",
         "owner": "lovelaceAcademy",
         "repo": "purs-nix",
-        "rev": "34e61d1e6b504e5717d1ff21e13763946113408b",
+        "rev": "372cc6920ade1603f2b1836ff085cac24ca968a0",
         "type": "github"
       },
       "original": {
