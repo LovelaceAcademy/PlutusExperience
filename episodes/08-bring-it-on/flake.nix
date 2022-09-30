@@ -33,6 +33,7 @@
                 with purs-nix.ps-pkgs-ns.lovelaceAcademy;
                 [
                   cardano-transaction-lib
+                  halogen
                 ];
               # FFI dependencies
               # foreign.Main.node_modules = [];

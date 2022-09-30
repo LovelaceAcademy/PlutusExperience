@@ -1,4 +1,4 @@
-module Donation.Script (parseScript, validator) where
+module Donation.Script (parseScript, toValidator) where
 
 import Contract.Prelude
 
@@ -14,6 +14,6 @@ foreign import script :: String
 parseScript :: Either Error PlutusScript
 parseScript = plutusV2Script <$> (lmap (error <<< printTextEnvelopeDecodeError) $ textEnvelopeBytes script PlutusScriptV2)
 
-validator :: Either Error Validator
-validator = wrap <$> parseScript
+toValidator :: Either Error Validator
+toValidator = wrap <$> parseScript
 
