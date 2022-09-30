@@ -2,11 +2,10 @@ module Main (main) where
 
 import Contract.Prelude
 
-import Contract.Config as Contract.Config
-import Contract.Monad as Contract.Monad
-import Scaffold as Scaffold
-import Examples.KeyWallet.Internal.Pkh2PkhContract (runKeyWalletContract_)
+import Contract.Config (testnetConfig)
+import Contract.Monad (launchAff_, runContract)
+import Donation (contract)
 
 
 main :: Effect Unit
-main = runKeyWalletContract_ \pkh lovelace unlock -> Scaffold.contract
+main = launchAff_ $ runContract testnetConfig contract
