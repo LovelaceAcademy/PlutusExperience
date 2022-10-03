@@ -15,7 +15,7 @@ import Contract.Value as V
 import Contract.Wallet (WalletSpec (UseKeys), PrivatePaymentKeySource (PrivatePaymentKeyValue), PrivatePaymentKey (PrivatePaymentKey))
 import Data.BigInt as BI
 import Donation.Script (toValidator)
-import Effect.Aff (error)
+import Effect.Exception (error)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -24,10 +24,10 @@ import Scripts (validatorHash)
 import Serialization (privateKeyFromBytes)
 import Types.RawBytes (hexToRawBytes)
 
-data Action = SetWalletKey String
+data Action = SetDonatorKey String
 
-contract :: forall r. Int -> Contract r Unit
-contract amount = do
+give :: forall r. Int -> Contract r Unit
+give amount = do
   validator <- liftEither $ toValidator
   let 
       value = V.lovelaceValueOf $ BI.fromInt amount
@@ -43,22 +43,29 @@ contract amount = do
   txId <- submit bsTx
   logInfo' $ "Tx ID: " <> show txId
 
+mkWalletSpec :: String -> Effect (Maybe WalletSpec)
+mkWalletSpec key = do
+        pk <- liftMaybe (error "Failed to parse private key") $ privateKeyFromBytes =<< hexToRawBytes key
+        let ws = UseKeys (PrivatePaymentKeyValue $ PrivatePaymentKey pk) Nothing
+        pure $ Just ws
+
 component :: forall q i o r. ConfigParams r -> H.Component q i o Aff
 component cfg = H.mkComponent
   { initialState: const ""
   , eval: H.mkEval $ H.defaultEval
     { handleAction = case _ of
-      (SetWalletKey key) -> do
-        pk <- liftMaybe (error "Failed to parse private key") $ privateKeyFromBytes =<< hexToRawBytes key
-        let ws = UseKeys (PrivatePaymentKeyValue $ PrivatePaymentKey pk) Nothing
-            cfg' = cfg { walletSpec = Just ws }
-        lift $ runContract cfg' $ contract 10
+      (SetDonatorKey key) -> do
+        ws <- liftEffect $ mkWalletSpec key
+        let cfg' = cfg { walletSpec = ws }
+        lift $ runContract cfg' $ give 10
         H.modify_ $ const key
     }
-  , render: \s -> HH.input
-      [ HP.placeholder "wallet secret key"
-      , HE.onValueChange SetWalletKey
-      , HP.value s
-      ]
+  , render: \s -> HH.div_ [
+        HH.input
+          [ HP.placeholder "donator secret key"
+          , HE.onValueChange SetDonatorKey
+          , HP.value s
+          ]
+    ]
 
   }

@@ -26,16 +26,12 @@ TODO: CTL Slides
 
 ## Prerequisites
 
-### TODO: Nami wallet on Preview with covering funds
+### CLI wallet on PreProd with covering funds
 
-- Download and install [Nami](https://namiwallet.io) in your browser
-- TODO: Change Nami to preview network (14-09-17-34)
-    tx: 8509f83a40b43af4fc2639ce2404a7be50d569b883c780569fb94fab5ce047c3
+- Create `payment.{skey,vkey,addr}` with given cardano-cli
 - Send test ADA to your wallet in [Faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
 
 ## Donator integrates his wallet
-
-(14-09-17-53)
 
 ```bash
 cd episodes/08-bring-it-on
