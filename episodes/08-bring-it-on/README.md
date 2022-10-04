@@ -104,19 +104,58 @@ launchAff_ :: forall a. Aff a -> Effect Unit
 runContract :: forall (r :: Row Type) (a :: Type). ConfigParams r -> Contract r a -> Aff a
 ```
 
-## Using a plutus script
+## Using a Validator
+
+```hs
+lock :: forall r. Int -> Contract r TransactionHash
+lock amount = do
+  validator <- ?toValidator :: Contract r Validator
+  let lookups = SL.validator validator
+  buildBalanceSignAndSubmitTx lookups ?constraints
+```
+
+```hs
+newtype Validator = Validator PlutusScript
+```
+
+```hs
+toValidator :: Either Error Validator
+toValidator = wrap <$> ?parseScript
+```
+Notice `Error` matching `MonadError Error (Contract r)`.
+
+## Plutus Script Parser
+
+```hs
+parseScript :: Either Error PlutusScript
+parseScript = plutusV2Script
+  <$> (lmap (error <<< printTextEnvelopeDecodeError) $ textEnvelopeBytes ?script PlutusScriptV2)
+```
+
+```hs
+data TextEnvelopeType = PlutusScriptV1 | PlutusScriptV2
+
+textEnvelopeBytes :: String -> TextEnvelopeType -> Either TextEnvelopeDecodeError ByteArray
+
+printTextEnvelopeDecodeError :: TextEnvelopeDecodeError -> String
+
+lmap :: forall f a b c. Bifunctor f => (a -> b) -> f a c -> f b c
+
+plutusV2Script :: ByteArray -> PlutusScript
+```
+
+## Plutus Script FFI
 
 ```javascript
+// Script.js
 exports.script = require("Scripts/always-succeeds-v2.plutus");
 ```
 
 > :warning: Your loader must know how to `require` a plutus file
 
 ```hs
+-- Script.purs
 foreign import script :: String
-
-parseScript :: Either Error PlutusScript
-parseScript = plutusV2Script <$> (lmap (error <<< printTextEnvelopeDecodeError) $ textEnvelopeBytes script PlutusScriptV2)
 ```
 
 ## Scenario
