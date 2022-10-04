@@ -122,7 +122,7 @@ newtype Validator = Validator PlutusScript
 toValidator :: Either Error Validator
 toValidator = wrap <$> ?parseScript
 ```
-Notice `Error` matching `MonadError Error (Contract r)`.
+> :bulb: Notice `Error` matching `MonadError Error (Contract r)`.
 
 ## Plutus Script Parser
 
@@ -158,7 +158,11 @@ exports.script = require("Scripts/always-succeeds-v2.plutus");
 foreign import script :: String
 ```
 
-## Scenario
+## Breakthrough
+
+> User Story: As a donator I want to give any amount of ADAs to the first visitor
+
+### Scenario
 
 1. Donator integrates his wallet
 2. Donator locks `n` ADA into `Script Address`
