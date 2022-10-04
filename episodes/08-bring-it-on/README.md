@@ -18,6 +18,8 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ../../slide README.md
 ```
 
+[Episode video]
+
 ## Requisites
 
 1. Plutus
