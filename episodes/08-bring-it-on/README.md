@@ -1,10 +1,6 @@
 ---
 title: 08 - Bring it on
 author: Walker Leite
-patat:
-  eval:
-    hs:
-      command: xargs -0 ghc -e
 ---
 # Introduction
 
@@ -29,12 +25,14 @@ To run this presentation type (you will need [nix](https://nixos.org)):
     - You should be familiar with [Nix Language](https://nixos.org/manual/nix/stable/language);
     - You should be familiar with [Nix Flake](https://github.com/LovelaceAcademy/plutus-experience#episode-3---our-first-web-app);
 3. PureScript
+    - You should be familiar with [Foreign Function Interface];
     - You should be familiar with [Monad Transformers];
     - You should be familiar with [Halogen];
 
 
-## Cardano Transaction Lib
+# Cardano Transaction Lib
 
+## Architecture
 
 ```markdown
 Frontend:
@@ -53,6 +51,73 @@ Ogmius (WebSocket) -|- Ogmius Datum Cache
 - [Ogmius](https://github.com/CardanoSolutions/ogmios) is a service to query the blockchain using websocket protocol. We don't use it directly.
 - [Ogmius Datum Cache](https://github.com/mlabs-haskell/ogmios-datum-cache) is a service to store datum values for V1 (non-vasil) contracts. We don't use it directly.
 - [Plutus Server](https://github.com/Plutonomicon/cardano-transaction-lib/tree/develop/server): when using paramaterized contracts, Haskell is still required to build the validator using its meta-programming capabilities, this server is used for this.
+
+## The Contract Monad
+
+The `Contract` is a newtype wrapper around `QueryM`, which is a `ReaderT` on `QueryEnv` over `Aff`:
+
+```hs
+newtype Contract (r :: Row Type) (a :: Type)
+
+-- constructor
+Contract (QueryMExtended r Aff a)
+
+newtype QueryMExtended (r :: Row Type) (m :: Type -> Type) (a :: Type)
+
+-- constructor
+QueryMExtended (ReaderT (QueryEnv r) m a)
+```
+
+The `r :: Row Type` defines the type of `extraConfig` field of the underlying given value for `ReaderT`:
+
+```hs
+type QueryEnv (r :: Row Type) = { config :: QueryConfig, extraConfig :: Record r, runtime :: QueryRuntime }
+```
+
+## The Contract Monad - Example
+
+Whenever we define a `Contract` type signature, we need to pass the extraConfig type or a placeholder and the returning value of the monad:
+
+```hs
+type ExtraConfig = { foo :: String }
+
+submitTx :: Contract ExtraConfig TransactionHash
+submitTx = do
+  cfg <- ask
+  logInfo' $ "Foo: " <> show cfg.foo
+  txId <- submit ?bsTx
+  logInfo' $ "Tx ID: " <> show txId
+  pure txId
+```
+
+To run, we need to pass a valid config (with extraConfig set):
+
+```hs
+main :: Effect Unit
+main = launchAff_ do
+  txId <- runContract {..., extraConfig = { foo = "bar" } } submitTx
+  log $ show txId
+```
+
+```hs
+launchAff_ :: forall a. Aff a -> Effect Unit
+runContract :: forall (r :: Row Type) (a :: Type). ConfigParams r -> Contract r a -> Aff a
+```
+
+## Using a plutus script
+
+```javascript
+exports.script = require("Scripts/always-succeeds-v2.plutus");
+```
+
+> :warning: Your loader must know how to `require` a plutus file
+
+```hs
+foreign import script :: String
+
+parseScript :: Either Error PlutusScript
+parseScript = plutusV2Script <$> (lmap (error <<< printTextEnvelopeDecodeError) $ textEnvelopeBytes script PlutusScriptV2)
+```
 
 ## Scenario
 
