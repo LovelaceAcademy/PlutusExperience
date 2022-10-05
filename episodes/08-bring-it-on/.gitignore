@@ -10,4 +10,6 @@
 /.spago
 /result
 /dist
-/payment.*
+/*.skey
+/*.vkey
+/*.addr
