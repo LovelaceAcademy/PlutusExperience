@@ -170,17 +170,22 @@ foreign import script :: String
 4. Visitor integrates his wallet
 5. Visitor grabs all ADA
 
+### Bootstrap
+
+```bash
+cd episodes/08-bring-it-on
+nix flake init -t github:LovelaceAcademy/cardano-transaction-lib
+git init
+git add --all
+nix develop
+npm install
+git add --all
+git commit -m "Initial commit"
+```
+
 ### CLI wallet on PreProd with covering funds
 
 - Create `donator.{skey,vkey,addr}` with given `cardano-cli`
 - Create `visitor.{skey,vkey,addr}` with given `cardano-cli`
 - Send test ADA to donator address [Faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
 
-## Donator integrates his wallet
-
-```bash
-cd episodes/08-bring-it-on
-nix flake init -t github:Plutonomicon/cardano-transaction-lib
-git init
-git commit -a -m "Initial commit"
-```
