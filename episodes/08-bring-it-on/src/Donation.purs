@@ -86,7 +86,7 @@ component cfg = H.mkComponent
       (SetDonatorKey key) -> do
         ws <- liftEffect $ mkWalletSpec key
         let cfg' = cfg { walletSpec = ws }
-        txId <- lift $ runContract cfg' $ give 10
+        txId <- lift $ runContract cfg' $ give 5_000_000
         put $ Just txId
       (SetVisitorKey key) -> do
         ws <- liftEffect $ mkWalletSpec key
