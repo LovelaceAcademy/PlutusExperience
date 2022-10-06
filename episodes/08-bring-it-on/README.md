@@ -193,5 +193,4 @@ git commit -m "Initial commit"
 
 - Create `donator.{skey,vkey,addr}` with given `cardano-cli`
 - Create `visitor.{skey,vkey,addr}` with given `cardano-cli`
-- Send test ADA to donator address [Faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
-
+- Send test ADA to donator and visitor address [Faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
