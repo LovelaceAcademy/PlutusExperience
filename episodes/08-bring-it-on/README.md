@@ -17,7 +17,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ### Community Support
 
 - [LovelaceAcademy Discord](https://discord.gg/fWP9eGdfZ8)
-- [StackExchange](https://cardano.stackexchange.com/) (bulb use the tag lovelace-academy)
+- [StackExchange](https://cardano.stackexchange.com/) (:bulb: use the tag lovelace-academy)
 - [Plutonomicon Discord](https://discord.gg/gGFdGaUE)
 
 [Episode video]
