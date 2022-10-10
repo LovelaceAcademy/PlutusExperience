@@ -1,4 +1,4 @@
-# plutus-countexperience
+# plutus-experience
 
 ## Episode 1 - Plutus Playground
 
