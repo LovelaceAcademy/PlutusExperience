@@ -1,4 +1,4 @@
-# plutus-experience
+# plutus-countexperience
 
 ## Episode 1 - Plutus Playground
 
@@ -24,42 +24,51 @@
 
 ## Episode 3 - Our First Web App
 
+- Nix language basics
 - Building a Nix flake for a PureScript project
 - Algebric Data Types
 - High Kinded Types
 - Pattern Matching
-- Do notation
 - Writing the HTML of our Web App
 
 ## Episode 4 - Foundations
 
-- TypeClasses
+- Typeclasses
 - Semigroup and Monoids
+- Functors
 
 ## Episode 5 - Burritos Everywhere
 
-- Functors
-- Bind, Apply and Applicative
+- Apply and Applicative
+- Bind, Do notation
 - Monads
 
 ## Episode 6 - Building Smart Contracts
 
-- Building a Nix flake for a Plutus project
+- IO/Effect
 - The Validator
-- The Contract Monad
-- Simulating in Playground
+- Building a Nix flake for a Plutus project
+- Compiling to Plutus Core
 
-## Episode 7 - Going Live
+## Episode 7 - Building Web Apps
 
-- Untyped vs Typed Validation Scripts
-- Running a testnet
-- Running the contract in the testnet with cardano-cli
+- PureScript FFI
+- Monad Transformers
+- Aff
+- PureScript Halogen
+- Web App to show Wallet Funds
 
 ## Episode 8 - Bring it on
 
 - Off-chain with Cardano-Transaction-Lib
 - Building a web app to test the contract
 - Integrating with a Wallet
+
+## Episode 9 - Going Live
+
+- Untyped vs Typed Validation Scripts
+- Running the contract in the testnet with cardano-cli
+- Testing with Plutip
 
 ## Episode 9 - A Vesting Contract (backend)
 
@@ -71,9 +80,6 @@
 
 ## Episode 10 - A Vesting Contract (frontend)
 
-- Effect
-- Aff
-- Monad Transformers
 - Building the UI
 
 ## Episode 11 - High Ground
