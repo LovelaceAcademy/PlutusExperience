@@ -70,16 +70,12 @@
 - Running the contract in the testnet with cardano-cli
 - Testing with Plutip
 
-## Episode 9 - A Vesting Contract (backend)
+## Episode 10 - A Vesting Contract
 
 - Script Contexts
 - Datums
 - Redeemer
 - Handling Time (Slots)
-- Simulating in CTL
-
-## Episode 10 - A Vesting Contract (frontend)
-
 - Building the UI
 
 ## Episode 11 - High Ground
