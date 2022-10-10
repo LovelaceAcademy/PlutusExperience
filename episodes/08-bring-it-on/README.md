@@ -25,15 +25,15 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ## Requisites
 
 1. Plutus
-    - You should be familiar with [EUTxO Model](https://github.com/LovelaceAcademy/plutus-experience#episode-1---plutus-playground);
-    - You should be able to [serialize plutus code](https://github.com/LovelaceAcademy/plutus-experience#episode-7---going-live)
+    - You should be familiar with EUTxO Model (episode 1);
+    - You should be able to serialize plutus code (episode 6);
 2. Nix
-    - You should be familiar with [Nix Language](https://nixos.org/manual/nix/stable/language);
-    - You should be familiar with [Nix Flake](https://github.com/LovelaceAcademy/plutus-experience#episode-3---our-first-web-app);
+    - You should be familiar with Nix Language (episode 3);
+    - You should be familiar with Nix Flakes (episode 3);
 3. PureScript
-    - You should be familiar with [Foreign Function Interface];
-    - You should be familiar with [Monad Transformers];
-    - You should be familiar with [Halogen];
+    - You should be familiar with Foreign Function Interface (episode 7);
+    - You should be familiar with Monad Transformers (episode 7);
+    - You should be familiar with Halogen (episode 7);
 
 
 # Cardano Transaction Lib
