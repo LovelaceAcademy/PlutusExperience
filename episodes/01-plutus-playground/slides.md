@@ -28,4 +28,12 @@ To run this presentation type (you will need [nix](https://nixos.org)):
     - Although not essential, being familiar with a language will be beneficial in understanding the in-depth content of this course;
     - Knowing JavaScript and HTML will be beneficial;
 2. Functional programming paradigm
-    - Although not essential, being familiar will be beneficial in understanding the in-depth content of this course;
+    - Although not essential, it will help in the understanding of the in-depth content of this course;
+
+## Intended audience
+
+Web developers aiming to build DApps on Cardano.
+
+## Goals
+
+Build your own javascript-backed DAapp using [Plutus](https://developers.cardano.org/docs/smart-contracts/plutus) and [CTL](https://github.com/Plutonomicon/cardano-transaction-lib)
