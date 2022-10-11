@@ -1,6 +1,10 @@
 ---
 title: 01 - Plutus Playground
 author: Walker Leite
+patat:
+  eval:
+    nix:
+      command: xargs -0 nix eval --impure --expr
 ---
 # Introduction
 
@@ -37,3 +41,107 @@ Web developers aiming to build DApps on Cardano.
 ## Goals
 
 Build your own javascript-backed DAapp using [Plutus](https://developers.cardano.org/docs/smart-contracts/plutus) and [CTL](https://github.com/Plutonomicon/cardano-transaction-lib)
+
+## The EUTxO Model
+
+## Nix
+
+- The package manager `nix-env`
+- The registry `nixpkgs`
+- The language `default.nix`
+- The OS `NixOS`
+
+## Nix - The language
+
+### Strings and variables
+
+```nix
+let thing  = "world"; in ''
+    Hello ${thing}!
+      This should be 2 spaces away.
+  ''
+```
+
+## Lists and Sets
+
+```nix
+let amount = 1000;
+    type = { name = "cake"; };
+    flavor = rec {
+        name = "lemon";
+        related = [ name "pistachio" ];
+    };
+    product = {
+        type = type.name;
+        flavor = flavor;
+        image = ./lemon-cake.jpg;
+        price = 14.99;
+    };
+in [
+    product.flavor.name
+    product.image
+    product.price
+    amount
+    product.flavor.related
+   ]
+```
+
+## Inherit and with
+
+```nix
+let 
+    attr = { tires = 4; fuel = 100; };
+    car = { inherit attr; brand = "ferrari"; };
+    grid = { driver = { name = "alonso"; pos = 3; }; };
+in {
+    inherit car;
+    inherit (grid) driver;
+    stops = with attr; [
+        { inherit fuel; }
+        { inherit fuel; inherit tires; }
+    ];
+}
+```
+
+## Comments, globals, functions and imports
+
+```nix
+/*
+disqualified.nix
+builtins is global
+*/
+driver: builtins.length driver.penalties > 0
+```
+
+```nix
+let ended = total-laps: race: race.lap >= total-laps;
+    race-ended = ended 50;
+    # import is also global
+    disqualified = import ./disqualified.nix;
+    wins = race: driver: race-ended race
+                      && !disqualified driver
+                      && driver.pos == 1;
+    race = { lap = 50; };
+in [
+    (wins race { pos = 1; penalties = []; })
+    (wins race { pos = 2; penalties = [ "false start"]; })
+    (wins race { pos = 3; penalties = []; })
+   ]
+```
+
+## Derivations
+
+It is a function that takes a set of attributes, including but not limited to:
+- system string (like "x86_64-linux")
+- the name string
+- builder derivation or path
+
+:bulb: Every attribute is passed as environment variables to the builder, if a derivation attribute is passed, it will be evaluated (aka built) before being passed.
+
+Then the function is executed in a given default environment and `$out` is set to a 
+
+[Derivation manual](https://nixos.org/manual/nix/stable/language/derivations.html)
+
+## Derivation - Example
+
+
