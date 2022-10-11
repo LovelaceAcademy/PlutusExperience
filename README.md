@@ -8,7 +8,7 @@
   - Requirements
   - Materials
 - The EUTxO Model
-- Nix, using nix-env
+- Nix language basics
 - Plutus Playground
   - Smart Contract Simulations
 
@@ -24,7 +24,6 @@
 
 ## Episode 3 - Our First Web App
 
-- Nix language basics
 - Building a Nix flake for a PureScript project
 - Algebric Data Types
 - High Kinded Types
