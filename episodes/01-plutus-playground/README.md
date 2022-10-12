@@ -4,7 +4,7 @@ author: Walker Leite
 patat:
   eval:
     nix:
-      command: xargs -0 nix eval --impure --expr
+      command: sed 's/"/\\"/g' | xargs -0 -I {} bash -c 'nix eval --impure --expr "{}" | nix run nixpkgs#nixfmt'
     bash:
       command: xargs -0 bash -c
 ---
@@ -44,44 +44,48 @@ Web developers aiming to build DApps on Cardano.
 
 Build your own javascript-backed DAapp using [Plutus](https://developers.cardano.org/docs/smart-contracts/plutus) and [CTL](https://github.com/Plutonomicon/cardano-transaction-lib)
 
-## UTxO - Unspent Input
+# The EUTxo Model
+
+## Unspent Input
 
 ![unspent](images/001.png)
 
-## UTxO - Transaction
+## Transaction
 
 ![transaction](images/002.png)
 
-## UTxO - Spent Input
+## Spent Input
 
 ![spent input](images/003.png)
 
-## UTxO - Spent Output
+## Spent Output
 
 ![spent output](images/004.png)
 
-## EUTxO - Script Validation
+## Script Validation
 
 ![script validation](images/005.png)
 
-## EUTxO - Script Context
+## Script Context
 
 ![script context](images/006.png)
 
-## EUTxO - Deep dive
+## Deep dive
 
 - [Plutus Pionners](https://plutus-pioneer-program.readthedocs.io/en/latest/week1.html)
 - [Official Docs](https://developers.cardano.org/docs/get-started/technical-concepts#unspent-transaction-output-utxo)
 - [Unofficial Docs](https://docs.cardano.org/learn/eutxo-explainer)
 
-## Nix
+# Nix
+
+## Components
 
 - The package manager `nix-env`
 - The registry `nixpkgs`
 - The language `default.nix`
 - The OS `NixOS`
 
-## Nix - The language
+## Nix language
 
 ### Strings and variables
 
@@ -180,7 +184,7 @@ The builder is executed in a given environment where `$out` is set to the path o
 echo "moo..." >> $out
 ```
 
-```nix
+```
 # cowsay.nix
 builtins.derivation {
 	system = "x86_64-linux";
@@ -191,7 +195,6 @@ builtins.derivation {
 
 ```bash
 nix-build ./cowsay.nix
-ls -l result
 ```
 
 ```bash
