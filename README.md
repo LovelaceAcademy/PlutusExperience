@@ -1,5 +1,11 @@
 # plutus-experience
 
+To run anyting on this repository, you'll need to have:
+
+- [Nix](https://nixos.org)
+- [IOG Nix Cache - no strict required, but highly recommended](https://input-output-hk.github.io/haskell.nix/tutorials/getting-started.html#setting-up-the-binary-cache)
+- GNU/Linux (it might work on other systems, not tested)
+
 ## Episode 1 - Plutus Playground
 
 - Introduction
