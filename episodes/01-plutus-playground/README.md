@@ -44,7 +44,35 @@ Web developers aiming to build DApps on Cardano.
 
 Build your own javascript-backed DAapp using [Plutus](https://developers.cardano.org/docs/smart-contracts/plutus) and [CTL](https://github.com/Plutonomicon/cardano-transaction-lib)
 
-## The EUTxO Model
+## UTxO - Unspent Input
+
+![unspent](images/001.png)
+
+## UTxO - Transaction
+
+![transaction](images/002.png)
+
+## UTxO - Spent Input
+
+![spent input](images/003.png)
+
+## UTxO - Spent Output
+
+![spent output](images/004.png)
+
+## EUTxO - Script Validation
+
+![script validation](images/005.png)
+
+## EUTxO - Script Context
+
+![script context](images/006.png)
+
+## EUTxO - Deep dive
+
+- [Plutus Pionners](https://plutus-pioneer-program.readthedocs.io/en/latest/week1.html)
+- [Official Docs](https://developers.cardano.org/docs/get-started/technical-concepts#unspent-transaction-output-utxo)
+- [Unofficial Docs](https://docs.cardano.org/learn/eutxo-explainer)
 
 ## Nix
 
@@ -164,5 +192,8 @@ builtins.derivation {
 ```bash
 nix-build ./cowsay.nix
 ls -l result
+```
+
+```bash
 cat result
 ```
