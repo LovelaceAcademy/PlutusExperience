@@ -5,6 +5,8 @@ patat:
   eval:
     nix:
       command: xargs -0 nix eval --impure --expr
+    bash:
+      command: xargs -0 bash -c
 ---
 # Introduction
 
@@ -14,7 +16,7 @@ In this episode we will introduce you to Cardano EUTxO, Nix and we'll play in Pl
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
-```bash
+```sh
 ../../slide README.md
 ```
 
@@ -131,17 +133,36 @@ in [
 
 ## Derivations
 
-It is a function that takes a set of attributes, including but not limited to:
+Is the result (side-effect) of calling a function that takes a set of attributes, including but not limited to:
 - system string (like "x86_64-linux")
 - the name string
 - builder derivation or path
 
 :bulb: Every attribute is passed as environment variables to the builder, if a derivation attribute is passed, it will be evaluated (aka built) before being passed.
 
-Then the function is executed in a given default environment and `$out` is set to a 
+The builder is executed in a given environment where `$out` is set to the path of that derivation.
 
 [Derivation manual](https://nixos.org/manual/nix/stable/language/derivations.html)
 
 ## Derivation - Example
 
+```sh
+#!/bin/sh
+# build-cowsay.sh
+echo "moo..." >> $out
+```
 
+```nix
+# cowsay.nix
+builtins.derivation {
+	system = "x86_64-linux";
+	name = "cowsay";
+	builder = ./build-cowsay.sh;
+}
+```
+
+```bash
+nix-build ./cowsay.nix
+ls -l result
+cat result
+```
