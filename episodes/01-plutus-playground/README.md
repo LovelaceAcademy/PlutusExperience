@@ -44,7 +44,7 @@ Web developers aiming to build DApps on Cardano.
 
 Build your own javascript-backed DAapp using [Plutus](https://developers.cardano.org/docs/smart-contracts/plutus) and [CTL](https://github.com/Plutonomicon/cardano-transaction-lib)
 
-# The EUTxo Model
+# The EUTxO Model
 
 ## Unspent Input
 
@@ -199,4 +199,18 @@ nix-build ./cowsay.nix
 
 ```bash
 cat result
+```
+
+# Breakthrough: Plutus Playground
+
+> Run the default smart contract in the emulator
+
+> Bonus: Run also plutus docs
+
+## Bootstrap
+
+```sh
+git clone https://github.com/input-output-hk/plutus-apps
+cd plutus-apps
+nix-shell
 ```
