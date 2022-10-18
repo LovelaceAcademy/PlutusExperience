@@ -12,7 +12,7 @@ patat:
 
 ## Getting Started
 
-In this episode we will introduce you to Cardano EUTxO, Nix and we'll play in Plutus Playground. 
+In this module we will introduce you to Cardano EUTxO, Nix and we'll play in Plutus Playground. 
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
@@ -26,7 +26,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 - [StackExchange](https://cardano.stackexchange.com/) (:bulb: use the tag lovelace-academy)
 - [Plutonomicon Discord](https://discord.gg/gGFdGaUE)
 
-[Episode video]
+[Module video]
 
 ## What you should know
 

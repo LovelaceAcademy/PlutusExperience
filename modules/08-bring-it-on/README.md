@@ -6,7 +6,7 @@ author: Walker Leite
 
 ## Getting Started
 
-In this episode we'll build the most common off-chain code for a smart contract on Cardano.
+In this module we'll build the most common off-chain code for a smart contract on Cardano.
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
@@ -20,20 +20,20 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 - [StackExchange](https://cardano.stackexchange.com/) (:bulb: use the tag lovelace-academy)
 - [Plutonomicon Discord](https://discord.gg/gGFdGaUE)
 
-[Episode video]
+[Module video]
 
 ## Requisites
 
 1. Plutus
-    - You should be familiar with EUTxO Model (episode 1);
-    - You should be able to serialize plutus code (episode 6);
+    - You should be familiar with EUTxO Model (module 1);
+    - You should be able to serialize plutus code (module 6);
 2. Nix
-    - You should be familiar with Nix Language (episode 3);
-    - You should be familiar with Nix Flakes (episode 3);
+    - You should be familiar with Nix Language (module 3);
+    - You should be familiar with Nix Flakes (module 3);
 3. PureScript
-    - You should be familiar with Foreign Function Interface (episode 7);
-    - You should be familiar with Monad Transformers (episode 7);
-    - You should be familiar with Halogen (episode 7);
+    - You should be familiar with Foreign Function Interface (module 7);
+    - You should be familiar with Monad Transformers (module 7);
+    - You should be familiar with Halogen (module 7);
 
 
 # Cardano Transaction Lib
@@ -179,7 +179,7 @@ foreign import script :: String
 ### Bootstrap
 
 ```bash
-cd episodes/08-bring-it-on
+cd modules/08-bring-it-on
 nix flake init -t github:LovelaceAcademy/cardano-transaction-lib
 git init
 git add --all
