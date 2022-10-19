@@ -1,5 +1,5 @@
 ---
-title: 01 - Plutus Playground
+title: 01 - Plutus Emulator
 author: Walker Leite
 patat:
   eval:
@@ -12,7 +12,7 @@ patat:
 
 ## Getting Started
 
-In this module we will introduce you to Cardano EUTxO, Nix and we'll play in Plutus Playground. 
+In this module we will introduce you to Cardano EUTxO, Nix and we'll play in Plutus Emulator. 
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
@@ -201,16 +201,8 @@ nix-build ./cowsay.nix
 cat result
 ```
 
-# Breakthrough: Plutus Playground
+# Breakthrough: Plutus Emulator
 
 > Run the default smart contract in the emulator
 
-> Bonus: Run also plutus docs
-
-## Bootstrap
-
-```sh
-git clone https://github.com/input-output-hk/plutus-apps
-cd plutus-apps
-nix-shell
-```
+> Bonus: Run also docs

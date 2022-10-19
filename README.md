@@ -6,7 +6,7 @@ To run anyting on this repository, you'll need to have:
 - [IOG Nix Cache - no strict required, but highly recommended](https://input-output-hk.github.io/haskell.nix/tutorials/getting-started.html#setting-up-the-binary-cache)
 - GNU/Linux (it might work on other systems, not tested)
 
-## Module 1 - Plutus Playground
+## Module 1 - Plutus Emulator
 
 - Introduction
   - Background
@@ -15,8 +15,8 @@ To run anyting on this repository, you'll need to have:
   - Materials
 - The EUTxO Model
 - Nix language basics
-- Plutus Playground
-  - Smart Contract Simulations
+- Plutus Emulator
+  - Simulating a simple contract
 
 ## Module 2 - PureScript Foundations
 - Introduction to PureScript
