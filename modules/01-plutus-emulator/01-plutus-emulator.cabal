@@ -1,0 +1,12 @@
+cabal-version:      2.4
+name:               01-plutus-emulator
+version:            0.0.1
+
+author:             Walker
+maintainer:         walker@praiseweb.com.br
+
+library
+   exposed-modules:  Emulator
+   hs-source-dirs:   src
+   build-depends:    base
+   default-language: GHC2021
