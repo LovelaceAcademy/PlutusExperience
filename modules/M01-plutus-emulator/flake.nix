@@ -17,7 +17,7 @@
         packageName = "M01-plutus-emulator";
       in {
         packages.${packageName} =
-          haskellPackages.callCabal2nix packageName self rec {
+          haskellPackages.callCabal2nix packageName ./${packageName}.cabal rec {
             # Dependency overrides go here
           };
 
