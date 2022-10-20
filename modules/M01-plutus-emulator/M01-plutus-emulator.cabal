@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               01-plutus-emulator
+name:               M01-plutus-emulator
 version:            0.0.1
 
 author:             Walker

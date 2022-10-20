@@ -14,7 +14,7 @@
         jailbreakUnbreak = pkg:
           pkgs.haskell.lib.doJailbreak (pkg.overrideAttrs (_: { meta = { }; }));
 
-        packageName = "01-plutus-emulator";
+        packageName = "M01-plutus-emulator";
       in {
         packages.${packageName} =
           haskellPackages.callCabal2nix packageName self rec {
