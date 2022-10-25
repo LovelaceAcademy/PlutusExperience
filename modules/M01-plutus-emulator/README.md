@@ -206,3 +206,16 @@ cat result
 > Run the default smart contract in the emulator
 
 > Bonus: Run also docs
+
+## Bootstrap
+
+- [Enable IOG Cache](https://github.com/input-output-hk/plutus-apps/#iohk-binary-cache)
+
+```bash
+git clone https://github.com/input-output-hk/plutus-apps.git
+git checkout 6b8bd0d80115ed5379ada31eea9e4e50db31f126
+```
+
+## Links
+
+- [Online Plutus Docs](https://playground.plutus.iohkdev.io/doc)
