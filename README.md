@@ -1,4 +1,4 @@
-# plutus-experience
+# PlutusExperience
 
 To run anyting on this repository, you'll need to have:
 
