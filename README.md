@@ -6,7 +6,7 @@ To run anyting on this repository, you'll need to have:
 - [IOG Nix Cache - no strict required, but highly recommended](https://input-output-hk.github.io/haskell.nix/tutorials/getting-started.html#setting-up-the-binary-cache)
 - GNU/Linux (it might work on other systems, not tested)
 
-## Module 1 - Plutus Emulator
+## [Module 1 - Plutus Emulator](modules/M01-plutus-emulator)
 
 - Introduction
   - Background
@@ -63,7 +63,7 @@ To run anyting on this repository, you'll need to have:
 - PureScript Halogen
 - Web App to show Wallet Funds
 
-## Module 8 - Bring it on
+## [Module 8 - Bring it on](modules/M08-bring-it-on)
 
 - Off-chain with Cardano-Transaction-Lib
 - Building a web app to test the contract
