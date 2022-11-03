@@ -26,7 +26,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 - [StackExchange](https://cardano.stackexchange.com/) (:bulb: use the tag lovelace-academy)
 - [Plutonomicon Discord](https://discord.gg/gGFdGaUE)
 
-[Module video]
+[![Module Video](https://img.youtube.com/vi/Vw5uCnR6Vzs/0.jpg)](https://www.youtube.com/watch?v=Vw5uCnR6Vzs&list=PLHJ1yaDcSSadb0aO4aBeq3xaoqzXOG9fB)
 
 ## What you should know
 
