@@ -76,9 +76,9 @@ Build your own javascript-backed DAapp using [Plutus](https://developers.cardano
 - [Official Docs](https://developers.cardano.org/docs/get-started/technical-concepts#unspent-transaction-output-utxo)
 - [Unofficial Docs](https://docs.cardano.org/learn/eutxo-explainer)
 
-# Nix
+## Nix
 
-## Components
+### Components
 
 - The package manager `nix-env`
 - The registry `nixpkgs`
@@ -201,7 +201,7 @@ nix-build ./cowsay.nix
 cat result
 ```
 
-# Breakthrough: Plutus Emulator
+## Breakthrough: Plutus Emulator
 
 > Run the default smart contract in the emulator
 
