@@ -200,3 +200,76 @@ main = do
   log (talk dog)
   log (talk cat)
 ```
+
+## Kinds
+
+Pseudo-code:
+
+`box` wraps n into a string 
+
+```haskell
+box :: Int -> String
+box 0 = "0"
+```
+
+the same way `Box` type constructor wraps `a` into a Box
+```haskell
+data Box a = Box a
+
+box :: Box Int
+box = Box 3
+```
+
+so `Box` type constructor is a function:
+```haskell
+Box :: a -> Box a
+```
+
+You can also read `Box` this way: I cannot give you a concrete type (e.g. `BoxType Int`) until you tell me what `a` is.
+
+## So, what really are kinds?
+
+> Kinds = "How many more types do I need defined before I have a 'concrete' type?" :smile:
+
+### Examples
+
+```haskell
+-- also known as "concrect type"
+Char :: Type
+data Char
+
+-- also known as "high kinded type"
+Box :: Type -> Type
+data Box a = Box a
+
+BoxOfTwo :: Type -> Type -> Type
+data BoxOfTwo a b = BoxOfTwo a b
+```
+
+### I mean real world examples:
+
+```haskell
+Tuple :: Type -> Type -> Type
+data Tuple a b;
+
+IntOther :: Type -> Type
+IntOther b = Tuple Int b
+
+IntAll :: Type
+data IntAll = Tuple Int Int
+```
+
+### I don't know Tuples
+
+What about Maybe (also known as Option in other languages), it represents nullable types.
+
+```haskell
+Maybe :: Type -> Type
+data Maybe a = Just a | Nothing
+
+MaybeInt :: Type
+data MaybeInt = Maybe Int
+
+MaybeChar :: Type
+data MaybeChar = Maybe Char
+```
