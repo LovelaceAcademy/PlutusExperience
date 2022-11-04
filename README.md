@@ -55,7 +55,7 @@ To run anyting on this repository, you'll need to have:
 - Building a Nix flake for a Plutus project
 - Compiling to Plutus Core
 
-## Module 7 - Building Web Apps
+## Module 7 - Jupiter
 
 - PureScript FFI
 - Monad Transformers
