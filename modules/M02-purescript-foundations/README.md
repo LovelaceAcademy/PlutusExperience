@@ -279,3 +279,9 @@ data MaybeChar = Maybe Char
 - [Pursuit](https://pursuit.purescript.org)
 - [Jordan's Reference](https://jordanmartinez.github.io/purescript-jordans-reference-site)
 - [PureScript by Example](https://book.purescript.org)
+
+# Breakthrough
+
+## Try PureScript
+
+- [Try PureScript](https://try.purescript.org)
