@@ -1,6 +1,10 @@
 ---
 title: M02 - PureScript Foundations
 author: Walker Leite
+patat:
+  eval:
+    purescript:
+      command: purs-eval | node --experimental-network-imports --input-type module
 ---
 # Introduction
 
@@ -44,7 +48,9 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 - Elm or Reason
 - PureScript
 
-## PureScript
+# PureScript
+
+## Why
 
 - Compile to readable JavaScript
 - Similar Haskell/Plutus syntax (learn once, use twice)
@@ -54,28 +60,143 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 [More on "Why PureScript"](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/01-Getting-Started/01-Why-Learn-PureScript.html)
 
-### Types
+## Types and conditionals
 
-PureScript basic structure divides in two main elements: 
-
-```purs
+```haskell
+entity_name :: Optional Type Signature
+entity_name = definition
 ```
 
-# Breakthrough: Plutus Emulator
+> :bulb: We use types to allow the compiler to test the function application (usage) and throw errors when something unexpected is being passed.
 
-> Run the default smart contract in the emulator
+```purescript
+module Main where
 
-> Bonus: Run also docs
+import Prelude
+import Effect.Console (log)
 
-## Bootstrap
+adult :: Int
+adult = 18
 
-- [Enable IOG Cache](https://github.com/input-output-hk/plutus-apps/#iohk-binary-cache)
+age :: Int -> String
+age n = if n >= adult then "you're an adult" else "you're a child"
 
-```bash
-git clone https://github.com/input-output-hk/plutus-apps.git
-git checkout 6b8bd0d80115ed5379ada31eea9e4e50db31f126
+main = log (age 19)
 ```
 
-## Links
+## Type error
 
-- [Online Plutus Docs](https://playground.plutus.iohkdev.io/doc)
+If we pass wrong parameters the compiler will throw:
+
+```
+main = log (age "18")
+```
+
+```
+  Could not match type
+
+    String
+
+  with type
+
+    Int
+
+
+while checking that type String
+  is at least as general as type Int
+while checking that expression "18"
+  has type Int
+in value declaration main
+```
+
+> :bulb: It helps to read this error message from bottom-up
+
+## Currying and Pattern matching
+
+```purescript
+module Main where
+
+import Prelude
+import Data.String (length)
+import Effect.Console (log)
+
+mkQuestion :: String -> Char -> String
+mkQuestion "abcD" 'D' = "congrats, your answer is correct"
+mkQuestion "abCd" 'C' = "congrats, your answer is correct"
+mkQuestion "aBcd" 'B' = "congrats, your answer is correct"
+mkQuestion "Abcd" 'A' = "congrats, your answer is correct"
+mkQuestion s 'A' | length s > 4 = "your question should have 4 alternatives"
+mkQuestion _ _ = "sorry, your answer is incorrect"
+
+evaluateQ1 :: Char -> String
+evaluateQ1 = mkQuestion "abCd"
+
+evaluateQ2 :: Char -> String
+evaluateQ2 = mkQuestion "aBcdf"
+
+-- ignore do for a moment, we'll introduce it later
+main = do
+  log (evaluateQ1 'C')
+  log (evaluateQ2 'A')
+  log (mkQuestion "Abcd" 'B')
+```
+
+## Custom Types
+
+How we create custom types?
+
+```purescript
+module Main where
+
+import Prelude
+import Effect.Console (log)
+
+-- read | as or
+data Animal = Cat String | Dog String
+
+-- append :: String -> String -> String
+talk :: Animal -> String
+talk (Dog name) = append "Hello, I am the dog " name
+talk (Cat name) = append "Hello, I am the cat " name
+
+dog :: Animal
+dog = Dog "max"
+
+main = do
+  log (talk dog)
+  log (talk (Cat "kitty"))
+```
+
+## Custom Types - continuation
+
+What if I need to identify animals by `Char` or `String`?
+
+```purescript
+module Main where
+
+import Prelude
+import Effect.Console (log)
+import Data.String.CodeUnits (singleton)
+
+data ID = CharID Char | StringID String
+data Animal a = Cat a | Dog a
+
+-- singleton ::  Char -> String
+merge :: String -> ID -> String
+merge str (CharID char) = append str (singleton char)
+merge str (StringID str') = append str str'
+
+talk :: Animal ID -> String
+talk (Dog id) = merge "Hello, I am the dog " id
+talk (Cat id) = merge "Hello, I am the cat " id
+
+dog :: Animal ID
+dog = Dog (StringID "max")
+
+cat :: Animal ID
+cat = Cat (CharID 'A')
+
+main = do
+  log (talk dog)
+  log (talk cat)
+```

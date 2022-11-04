@@ -23,6 +23,7 @@ To run anyting on this repository, you'll need to have:
   - Why PureScript
   - Types
   - Functions and Currying
+  - Algebric Data Types
   - Infix Function Application
   - Function composition
   - Language Reference
@@ -31,7 +32,6 @@ To run anyting on this repository, you'll need to have:
 ## Module 3 - Our First Web App
 
 - Building a Nix flake for a PureScript project
-- Algebric Data Types
 - High Kinded Types
 - Pattern Matching
 - Writing the HTML of our Web App
