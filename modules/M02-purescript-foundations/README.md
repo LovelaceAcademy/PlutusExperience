@@ -273,3 +273,9 @@ data MaybeInt = Maybe Int
 MaybeChar :: Type
 data MaybeChar = Maybe Char
 ```
+
+## Language reference
+
+- [Pursuit](https://pursuit.purescript.org)
+- [Jordan's Reference](https://jordanmartinez.github.io/purescript-jordans-reference-site)
+- [PureScript by Example](https://book.purescript.org)
