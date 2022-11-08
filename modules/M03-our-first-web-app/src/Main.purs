@@ -1,9 +1,10 @@
-module Main where
+module Main (main) where
 
-import Prelude
-
+import Prelude (($), Unit)
 import Effect (Effect)
-import Effect.Console (log)
+import Form (render, form)
+
+foreign import setHTML :: String -> Effect Unit
 
 main :: Effect Unit
-main = log "❄"
+main = setHTML $ render form
