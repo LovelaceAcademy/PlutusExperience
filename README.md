@@ -32,6 +32,7 @@ To run anyting on this repository, you'll need to have:
 ## Module 3 - Our First Web App
 
 - Building a Nix flake for a PureScript project
+- Let in, case of and anonymous functions
 - Infix Function Application
 - Function composition
 - Writing the HTML of our Web App
