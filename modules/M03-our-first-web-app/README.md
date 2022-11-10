@@ -179,6 +179,37 @@ Finally PureScript can be compiled to JavaScript running `purs-nix` inside of a 
 
 ## Infix operators
 
+```purescript
+module Main where
+
+import Prelude
+import Data.Function (flip)
+import Effect.Console (log)
+import Test.Assert (assert')
+
+data Roshambo = Rock | Paper | Scissors
+
+beats :: Roshambo -> Roshambo -> Boolean
+beats Scissors Paper = true
+beats Paper Rock = true
+beats Rock Scissors = true
+beats _ _ = false
+
+beats' :: Roshambo -> Roshambo -> Boolean
+beats' = flip beats
+
+infix 5 beats as !>
+infix 5 beats' as <!
+
+
+main = do
+  assert' "scissors should win paper" $ Scissors `beats` Paper
+  assert' "paper should lost to scissors" $ not $ Paper !> Scissors
+  assert' "rev: scissors should win paper" $ Paper <! Scissors
+  assert' "rev: paper should lost to scissors" $ not $ (<!) Scissors Paper
+  log "success"
+```
+
 ## Anonymous Functions
 
 ```purescript
