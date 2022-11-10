@@ -1,6 +1,10 @@
 ---
 title: M03 - Our First Web App
 author: Walker Leite
+patat:
+  eval:
+    purescript:
+      command: purs-eval | node --experimental-network-imports --input-type module
 ---
 # Introduction
 
@@ -170,6 +174,35 @@ Finally PureScript can be compiled to JavaScript running `purs-nix` inside of a 
 
 - [Nix Flakes Wiki](https://nixos.wiki/wiki/Flakes)
 - [Purs-nix](https://github.com/purs-nix/purs-nix)
+
+# PureScript
+
+## Infix operators
+
+## Anonymous Functions
+
+```purescript
+module Main where
+
+import Prelude
+import Effect.Console (log)
+import Test.Assert (assert')
+
+main =do
+  assert' "should equal 100" $ 100 == (\v -> v + 90) 10
+  assert' "should equal 5" $ 5 == ( (\a -> \b -> a + b) 2 ) 3
+  assert' "should equal 5" $ 5 == (\a -> \b -> a + b) 2 3
+  assert' "should equal 5" $ 5 == (\a b -> a + b) 2 3
+  assert' "should equal 300" $ 300 == ((*) 10) 30
+  assert' "should equal 300" $ 300 == ((*)) 10 30
+  log "success"
+```
+
+## Let in
+
+## Case of
+
+## Function composition
 
 # Breakthrough
 
