@@ -261,6 +261,44 @@ main = do
 
 ## Function composition
 
+```purescript
+module Main where
+
+import Prelude
+import Effect.Console (log)
+import Data.Show.Generic (genericShow)
+import Data.Generic.Rep (class Generic)
+
+type Distance = Number
+type Fuel = Number
+type Efficience = Number
+type Velocity = Number
+type Time = Number
+data Car = Car Time Distance Fuel Efficience Velocity
+
+setFuel :: Car -> Car
+setFuel (Car t d g e v) = Car t d (g - d*e*t) e v
+
+setDistance :: Car -> Car
+setDistance (Car t d g e v) = Car t (d + v*t) g e v
+
+
+runCar :: Car -> Car
+runCar = setFuel <<< setDistance
+
+runCar' :: Car -> Car
+runCar' = setDistance >>> setFuel
+
+main = do
+    log $ show $ runCar $ Car 2.0 0.0 200.0 0.5 80.0
+    log $ show $ runCar' $ Car 2.0 0.0 200.0 0.5 80.0
+
+-- do not worry with this boilerplate now
+derive instance Generic Car _
+instance Show Car where
+  show = genericShow
+```
+
 # Breakthrough
 
 ## User Story
