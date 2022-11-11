@@ -49,17 +49,18 @@ To run anyting on this repository, you'll need to have:
 - Apply and Applicative
 - Bind, Do notation
 - Monads
+- IO/Effect
 
 ## Module 6 - Building Smart Contracts
 
-- IO/Effect
+- PureScript FFI
 - The Validator
 - Building a Nix flake for a Plutus project
 - Compiling to Plutus Core
 
 ## Module 7 - Building Web Apps
 
-- PureScript FFI
+- Row Types and Records
 - Monad Transformers
 - Aff
 - PureScript Halogen
