@@ -32,6 +32,7 @@ To run anyting on this repository, you'll need to have:
 ## Module 3 - Our First Web App
 
 - Building a Nix flake for a PureScript project
+- Let in, case of and anonymous functions
 - Infix Function Application
 - Function composition
 - Writing the HTML of our Web App
@@ -39,6 +40,7 @@ To run anyting on this repository, you'll need to have:
 ## Module 4 - We should have a map
 
 - Typeclasses
+- Forall
 - Semigroup and Monoids
 - Functors
 
@@ -47,17 +49,18 @@ To run anyting on this repository, you'll need to have:
 - Apply and Applicative
 - Bind, Do notation
 - Monads
+- IO/Effect
 
 ## Module 6 - Building Smart Contracts
 
-- IO/Effect
+- PureScript FFI
 - The Validator
 - Building a Nix flake for a Plutus project
 - Compiling to Plutus Core
 
 ## Module 7 - Jupiter
 
-- PureScript FFI
+- Row Types and Records
 - Monad Transformers
 - Aff
 - PureScript Halogen
