@@ -177,6 +177,37 @@ Finally PureScript can be compiled to JavaScript running `purs-nix` inside of a 
 
 # PureScript
 
+## Where, Let in and Case of
+
+```purescript
+module Main where
+
+import Prelude
+import Data.Semigroup ((<>))
+import Effect.Console (log)
+
+ordinal :: Int -> String
+ordinal n = let s = show n in case n of
+              1 -> s <> "st"
+              2 -> s <> "nd"
+              3 -> s <> "rd"
+              _ -> s <> "th"
+
+welcome :: String -> String -> Int -> String
+welcome w n m = let m' | m <4 = ordinal m
+                       | otherwise = "invalid"
+                    thing = "module"
+                    sep :: String -> String
+                    sep s = " " <> s
+                in sep w <> sep m' <> sep thing <> sep "of" <> sep n
+
+main = log $ welcome' 3 <> welcome' 4 where
+  welcomeTxt :: String
+  welcomeTxt = "welcome to the"
+  course = "plutus experience"
+  welcome' n = "\n" <> welcome welcomeTxt course n
+```
+
 ## Infix operators
 
 ```purescript
@@ -201,7 +232,6 @@ beats' = flip beats
 infix 5 beats as !>
 infix 5 beats' as <!
 
-
 main = do
   assert' "scissors should win paper" $ Scissors `beats` Paper
   assert' "paper should lost to scissors" $ not $ Paper !> Scissors
@@ -219,7 +249,7 @@ import Prelude
 import Effect.Console (log)
 import Test.Assert (assert')
 
-main =do
+main = do
   assert' "should equal 100" $ 100 == (\v -> v + 90) 10
   assert' "should equal 5" $ 5 == ( (\a -> \b -> a + b) 2 ) 3
   assert' "should equal 5" $ 5 == (\a -> \b -> a + b) 2 3
@@ -228,10 +258,6 @@ main =do
   assert' "should equal 300" $ 300 == ((*)) 10 30
   log "success"
 ```
-
-## Let in
-
-## Case of
 
 ## Function composition
 

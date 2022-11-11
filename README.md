@@ -40,6 +40,7 @@ To run anyting on this repository, you'll need to have:
 ## Module 4 - Foundations
 
 - Typeclasses
+- Forall
 - Semigroup and Monoids
 - Functors
 
