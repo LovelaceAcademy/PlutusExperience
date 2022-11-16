@@ -42,6 +42,7 @@ To run anyting on this repository, you'll need to have:
 - Typeclasses
 - Forall
 - Semigroup and Monoids
+- Foldable
 - Functors
 
 ## Module 5 - Burritos Everywhere
