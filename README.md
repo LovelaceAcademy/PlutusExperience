@@ -18,7 +18,7 @@ To run anyting on this repository, you'll need to have:
 - Plutus Emulator
   - Simulating a simple contract
 
-## Module 2 - PureScript Foundations
+## [Module 2 - PureScript Foundations](modules/M02-purescript-foundations)
 - Introduction to PureScript
   - Why PureScript
   - Types
@@ -29,7 +29,7 @@ To run anyting on this repository, you'll need to have:
   - Language Reference
 - Try PureScript
 
-## Module 3 - Our First Web App
+## [Module 3 - Our First Web App](modules/M03-our-first-web-app)
 
 - Building a Nix flake for a PureScript project
 - Let in, case of and anonymous functions
