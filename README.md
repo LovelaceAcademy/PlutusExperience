@@ -44,6 +44,7 @@ To run anyting on this repository, you'll need to have:
 - Semigroup and Monoids
 - Foldable
 - Functors
+- UTxO transaction builder
 
 ## Module 5 - Burritos Everywhere
 
