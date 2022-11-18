@@ -37,7 +37,7 @@ To run anyting on this repository, you'll need to have:
 - Function composition
 - Writing the HTML of our Web App
 
-## Module 4 - We should have a map
+## [Module 4 - We should have a map](modules/M04-we-should-have-a-map)
 
 - Typeclasses
 - Forall
