@@ -1,6 +1,10 @@
 ---
 title: M04 - We should have a map
 author: Walker Leite
+patat:
+  eval:
+    purescript:
+      command: purs-eval | node --experimental-network-imports --input-type module
 ---
 # Introduction
 
@@ -29,7 +33,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Type Classes and forall
 
-## Before
+## Previous example
 
 ```purescript
 module Main where
@@ -60,7 +64,7 @@ main = log $ welcome' 3 <> welcome' 4 where
   welcome' n = "\n" <> welcome welcomeTxt course n
 ```
 
-## After
+## With type class
 
 ```purescript
 module Main where
@@ -100,6 +104,86 @@ main = log $ welcome' Third <> welcome' 4 where
   course = "plutus experience"
   welcome' :: forall a. Show a => a -> String
   welcome' n = "\n" <> welcome welcomeTxt course n
+```
+
+## Previous example
+
+```purescript
+module Main where
+
+import Prelude
+import Data.String (length)
+import Effect.Console (log)
+
+mkQuestion :: String -> Char -> String
+mkQuestion "abcD" 'D' = "congrats, your answer is correct"
+mkQuestion "abCd" 'C' = "congrats, your answer is correct"
+mkQuestion "aBcd" 'B' = "congrats, your answer is correct"
+mkQuestion "Abcd" 'A' = "congrats, your answer is correct"
+mkQuestion s 'A' | length s > 4 = "your question should have 4 alternatives"
+mkQuestion _ _ = "sorry, your answer is incorrect"
+
+evaluateQ1 :: Char -> String
+evaluateQ1 = mkQuestion "abCd"
+
+evaluateQ2 :: Char -> String
+evaluateQ2 = mkQuestion "aBcdf"
+
+main = do
+  log (evaluateQ1 'C')
+  log (evaluateQ2 'A')
+  log (mkQuestion "Abcd" 'B')
+```
+
+## With type class
+
+```purescript
+module Main where
+
+import Prelude
+  ( class Eq
+  , class Ord
+  , class Show
+  , ($)
+  , (==)
+  , (>)
+  , (&&)
+  , (<>)
+  , discard
+  , show
+  )
+import Effect.Console (log)
+
+class Reveal q a where
+  reveal :: q a -> a
+
+class Reveal q a <= Eval q a b where
+  eval :: q a -> b -> String
+
+data Question correct = Q correct
+data ABCD = A | B | C | D
+data OneTo a = N a a
+
+instance Reveal Question a where
+  reveal (Q x) = x
+
+derive instance Eq ABCD
+
+instance Eq a => Eval Question a a where
+  eval q r | (reveal q) == r = "congrats, your answer is correct"
+  eval _ _ = "sorry, your answer is incorrect"
+
+else instance (Eq a, Ord a, Show a) => Eval Question (OneTo a) a where
+  eval q r' = case reveal q of
+    q'@(N x y) | y > x -> "the question correct answer must be less or equal " <> show x
+    q'@(N _ y) | y == r' -> "congrats, your answer is correct"
+    _ -> "sorry, your answer is incorrect"
+
+main = do
+  log $ eval (Q C) C
+  log $ eval (Q $ N 4 5) 5
+  log $ eval (Q $ N 3 2) 3
+  log $ eval (Q $ N 5 2) 2
 ```
 
 # Breakthrough
