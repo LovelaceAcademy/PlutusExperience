@@ -186,6 +186,93 @@ main = do
   log $ eval (Q $ N 5 2) 2
 ```
 
+## Semigroup
+
+```purescript
+module Main where
+
+import Prelude (class Show, ($), show)
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
+import Effect.Console (log)
+
+class Semigroup a where
+  append :: a -> a -> a
+
+infixr 5 append as <>
+
+type Amount = Int
+data TokenName = ADA | BTC | DJED | USDA
+data Value = EmptyValue | Value TokenName Amount Value
+
+instance Semigroup Value where
+  append v EmptyValue = v
+  append v (Value k n vr) = Value k n (append v vr)
+
+valueOf :: TokenName -> Amount -> Value
+valueOf tn v = Value tn v EmptyValue
+
+
+main = log $ show $    valueOf ADA 5
+                    <> valueOf BTC 5
+                    <> valueOf DJED 5
+                    <> valueOf USDA 5
+
+-- do not worry with this boilerplate to show, we'll explain later
+derive instance Generic TokenName _
+derive instance Generic Value _
+instance Show TokenName where
+  show = genericShow
+instance Show Value where
+  show s = genericShow s
+```
+
+## Monoid
+
+```purescript
+module Main where
+
+import Prelude (class Show, ($), show)
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
+import Effect.Console (log)
+
+class Semigroup a where
+  append :: a -> a -> a
+
+infixr 5 append as <>
+
+class Semigroup a <= Monoid a where
+  mempty :: a
+
+type Amount = Int
+data TokenName = ADA | BTC | DJED | USDA
+data Value = EmptyValue | Value TokenName Amount Value
+
+instance Semigroup Value where
+  append v EmptyValue = v
+  append v (Value k n vr) = Value k n (append v vr)
+
+instance Monoid Value where
+  mempty = EmptyValue
+
+valueOf :: TokenName -> Amount -> Value
+valueOf tn v = Value tn v EmptyValue
+
+main = log $ show $    mempty
+                    <> valueOf ADA 5
+                    <> mempty
+                    <> valueOf BTC 5
+
+-- do not worry with this boilerplate to show, we'll explain later
+derive instance Generic TokenName _
+derive instance Generic Value _
+instance Show TokenName where
+  show = genericShow
+instance Show Value where
+  show s = genericShow s
+```
+
 # Breakthrough
 
 ## Exercise 
