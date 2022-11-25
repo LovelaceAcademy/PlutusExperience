@@ -273,6 +273,139 @@ instance Show Value where
   show s = genericShow s
 ```
 
+# Functors
+
+## There is a value
+
+![value](images/value.png)
+
+## And we apply another value
+
+![value_apply](images/value_apply.png)
+
+## In code
+
+```purescript
+module Main where
+
+import Prelude (($), (+), show)
+import Effect.Console (log)
+import Test.Assert (assert)
+
+value = 2
+
+main = log $ show $ ((+) 3) value
+```
+
+## Value and context
+
+![value_and_context](images/value_and_context.png)
+
+## Context
+
+![context](images/context.png)
+
+## Context type
+
+```haskell
+data Maybe a = Nothing | Just a
+```
+
+## Problem
+
+![no_fmap_ouch](images/no_fmap_ouch.png)
+
+## In code - Context
+
+```haskell
+data Maybe a = Nothing | Just a
+
+value :: Maybe Int
+value = Just 2
+```
+
+## In code - Context
+
+```haskell
+data Maybe a = Nothing | Just a
+
+value :: Maybe Int
+value = Just 2
+
+
+((+) 3) `magic` value
+-- output: 5
+
+-- magic :: (a -> b) -> Maybe a -> b
+```
+
+## In code - Map
+
+```haskell
+data Maybe a = Nothing | Just a
+
+value :: Maybe Int
+value = Just 2
+
+
+newValue :: Maybe Int
+newValue = ((+) 3) `map` value
+-- newValue: Just 5
+
+-- map :: (a -> b) -> Maybe a -> Maybe b
+```
+
+## In code - Map different type
+
+```haskell
+data Maybe a = Nothing | Just a
+
+value :: Maybe Int
+value = Just 2
+
+
+newValueStr :: Maybe String
+newValueStr = (\n -> show n <> "5") `map` value
+-- newValueStr: Just "25"
+
+-- map :: (a -> b) -> Maybe a -> Maybe b
+```
+
+## In code - Type class
+
+```purescript
+module Main where
+
+import Prelude (($), (+), (<>), show, discard)
+import Data.Maybe (Maybe (Nothing, Just))
+import Effect.Console (log)
+import Test.Assert (assert)
+
+class Functor f where
+  map :: forall a b. (a -> b) -> f a -> f b
+
+instance Functor Maybe where
+  map fn Nothing = Nothing
+  map fn (Just x) = Just $ fn x
+
+value :: Maybe Int
+value = Just 2
+
+newValue :: Maybe Int
+newValue = (+) 3 `map` value
+
+newValueStr :: Maybe String
+newValueStr = (\n -> show n <> "5") `map` value
+
+main = do
+  log $ show newValue
+  log $ show newValueStr
+```
+
+## Reference links
+
+- [Functors in Pictures](https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html)
+
 # Breakthrough
 
 ## Exercise 
