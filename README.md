@@ -52,6 +52,7 @@ To run anyting on this repository, you'll need to have:
 - Bind, Do notation
 - Monads
 - IO/Effect
+- Contract monad
 
 ## Module 6 - Building Smart Contracts
 
