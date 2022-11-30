@@ -22,6 +22,9 @@
                   console
                   effect
                   prelude
+                  tuples
+                  ordered-collections
+                  foldable-traversable
                 ];
 
               dir = ./.;
