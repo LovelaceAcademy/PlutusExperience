@@ -39,7 +39,7 @@ data Contract a = Contract Effect a
 
 buildTx :: Inputs -> Outputs -> Redeemer -> Validator -> Contract Boolean
 
-runContract :: forall a. Contract a -> Effect Unit
+runContract :: forall a. Contract a -> Effect a
 ```
 
 Change previous created `buildTx` to return the value using the `Contract` monad and implement the missing definitions.
