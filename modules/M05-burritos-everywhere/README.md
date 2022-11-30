@@ -35,11 +35,11 @@ In module 04 we've used `buildTx` to simulate a transaction build, in this modul
 ```purescript
 type Validator = Redeemer -> ScriptContext -> Datum -> Boolean
 
-data Contract a = Contract Effect a
+data Contract a = Contract a
 
 buildTx :: Inputs -> Outputs -> Redeemer -> Validator -> Contract Boolean
 
 runContract :: forall a. Contract a -> Effect a
 ```
 
-Change previous created `buildTx` to return the value using the `Contract` monad and implement the missing definitions.
+Change previous created `buildTx` to return the value using the `Contract` monad and implement the missing definitions. `runContract` must log in the console the contract execution. 
