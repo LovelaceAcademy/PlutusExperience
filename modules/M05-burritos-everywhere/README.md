@@ -1,6 +1,10 @@
 ---
 title: M05 - Burritos Everywhere
 author: Walker Leite
+patat:
+  eval:
+    purescript:
+      command: purs-eval | node --experimental-network-imports --input-type module
 ---
 # Introduction
 
@@ -231,6 +235,36 @@ ys = x
 ys :: Tuple String Int
 ys = x
 -- Tuple bind works on the snd value
+```
+
+## Do notation
+
+The do notation is a syntax suggar for `>>=`:
+
+```purescript
+module Main where
+
+import Prelude (($), (>>=), (==), div, bind, show)
+import Data.Maybe (Maybe(Nothing, Just))
+import Data.Int (even)
+import Effect.Console (log)
+
+half x = case even x of
+  true -> Just (x `div` 2)
+  false -> Nothing
+
+x = do
+  v <- Just 20
+  v' <- half v
+  half v'
+  
+-- translates to
+y = Just 20 >>= \v -> half v >>= \v' -> half v'
+
+-- which is the same of
+z = Just 20 >>= half >>= half
+
+main = log $ show [x, y, z]
 ```
 
 ## Credits
