@@ -104,7 +104,7 @@ foo = functionTakingNArguments <$> computationProducingArg1
                                <*> computationProducingArgN
 ```
 
-> :bulb: nothing says that computations must happen serially, actually `Apply` allows parallel computation and we'll see it in the future
+> :bulb: nothing says that computations must happen sequentially, actually `Apply` allows parallel computation and we'll see it in the future
 
 ## Apply problem
 
