@@ -5,6 +5,8 @@ patat:
   eval:
     purescript:
       command: purs-eval | node --experimental-network-imports --input-type module
+    purescript':
+      command: purs-eval
 ---
 # Introduction
 
@@ -265,6 +267,69 @@ y = Just 20 >>= \v -> half v >>= \v' -> half v'
 z = Just 20 >>= half >>= half
 
 main = log $ show [x, y, z]
+```
+
+## Effect (Haskell IO)
+
+The `Effect` is a type without constructors that represent effects in the runtime.
+
+```haskell
+data Effect a
+```
+
+The underlying `a`is the return type, it can be `Unit` to represent a non-returning `Effect`
+
+```purescript'
+module Main where
+
+import Prelude (Unit, unit, pure)
+import Effect (Effect)
+import Effect.Console (log)
+
+main :: Effect Unit
+main = log "hello"
+-- the side-effect in this case is logging in the console
+```
+
+```purescript
+module Main where
+
+import Prelude (Unit, ($), (>>=), (<>), show)
+import Effect (Effect)
+import Effect.Console (log)
+import Effect.Now (nowDate)
+
+main :: Effect Unit
+main = nowDate >>= \d -> log $ "the current date is " <> show d
+```
+
+## Combining Effects
+
+```purescript
+module Main where
+
+import Prelude (Unit, ($), (>>=), (<>), (>>>), (<$>), (<*>), bind, pure, discard, show)
+import Effect (Effect)
+import Effect.Console (log)
+import Effect.Now (nowDate, nowTime)
+import Effect.Random (random)
+
+showNowDate :: Effect String
+showNowDate = do
+    d <- nowDate
+    pure $ "the current date is: " <> show d 
+
+showNowTime :: Effect String
+showNowTime = (\d -> "the current date is: " <> show d) <$> nowTime
+
+logRandom :: Effect Unit
+logRandom = show >>> (<>) "here is a random number: " <$> random >>= log
+
+main :: Effect Unit
+main = do
+  showNowDate >>= log
+  showNowTime >>= log
+  logRandom
 ```
 
 ## Credits
