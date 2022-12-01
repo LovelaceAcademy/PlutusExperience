@@ -136,6 +136,107 @@ y = x
 -- like magic: y = Just 5
 ```
 
+## Applicative problem
+
+```haskell
+data Maybe a = Nothing | Just a
+
+half x = case even x of
+    true -> Just (x `div` 2)
+    false -> Nothing
+```
+
+## Half
+
+![half](images/half.png)
+
+
+## Half Ouch
+
+![half](images/half_ouch.png)
+
+## Plunger
+
+![plunger](images/plunger.jpg)
+
+## Bind Type Class
+
+```haskell
+data Maybe a = Nothing | Just a
+
+half :: Int -> Maybe Int
+half x = case even x of
+    true -> Just (x `div` 2)
+    false -> Nothing
+```
+
+```haskell
+> Just 3 >>= half
+Nothing
+> Just 4 >>= half
+Just 2
+> Nothing >>= half
+Nothing
+-- (>>=) :: f a -> (a -> f b) -> f b
+```
+
+```haskell
+class Bind :: (Type -> Type) -> Constraint
+class (Apply m) <= Bind m where
+    bind :: forall a b. m a -> (a -> m b) -> m b
+
+infixl 1 bind as >>=
+
+instance Bind Maybe where
+    bind (Just x) fn = fn x
+    bind Nothing  _ = Nothing
+```
+
+## Bind Just
+
+![bind_just](images/bind_just.png)
+
+## Bind Nothing
+
+![bind_nothing](images/bind_nothing.png)
+
+## Bind Chain
+
+```haskell
+> Just 20 >>= half >>= half >>= half
+Nothing
+```
+
+## Bind Chain 2
+
+![bind_chain](images/bind_chain.png)
+
+## Monad
+
+Put simply Monad is Bind (`>>=`) + Applicative (`pure`):
+
+```haskell
+class (Applicative m, Bind m) <= Monad m
+```
+
+So, as in Applicative, we can:
+
+```haskell
+xs :: forall m. Monad m => m Int
+xs = pure 20 >>= half
+
+ys :: Maybe Int
+ys = x
+
+ys :: Tuple String Int
+ys = x
+-- Tuple bind works on the snd value
+```
+
+## Credits
+
+Pictures and examples from [adit.io](https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html)
+
 # Breakthrough
 
 ## Exercise 
