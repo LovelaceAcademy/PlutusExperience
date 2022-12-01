@@ -116,7 +116,7 @@ x = (+) <$> ?? 2 <*> ?? 3
 -- ?? would be :: Int -> f Int
 ```
 
-## Apply Type Class
+## Applicative Type Class
 
 ```haskell
 class Applicative :: (Type -> Type) -> Constraint
