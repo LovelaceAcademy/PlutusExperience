@@ -232,10 +232,10 @@ xs :: forall m. Monad m => m Int
 xs = pure 20 >>= half
 
 ys :: Maybe Int
-ys = x
+ys = xs
 
 ys :: Tuple String Int
-ys = x
+ys = xs
 -- Tuple bind works on the snd value
 ```
 
