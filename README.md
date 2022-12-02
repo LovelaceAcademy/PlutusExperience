@@ -46,12 +46,13 @@ To run anyting on this repository, you'll need to have:
 - Functors
 - UTxO transaction builder
 
-## Module 5 - Burritos Everywhere
+## [Module 5 - Burritos Everywhere](modules/M05-burritos-everywhere)
 
 - Apply and Applicative
 - Bind, Do notation
 - Monads
 - IO/Effect
+- Contract monad
 
 ## Module 6 - Building Smart Contracts
 
