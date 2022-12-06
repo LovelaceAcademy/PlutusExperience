@@ -54,7 +54,7 @@ To run anyting on this repository, you'll need to have:
 - IO/Effect
 - Contract monad
 
-## Module 6 - Building Smart Contracts
+## [Module 6 - Building Smart Contracts](modules/M06-building-smart-contracts)
 
 - PureScript FFI
 - The Validator
