@@ -58,6 +58,7 @@ To run anyting on this repository, you'll need to have:
 
 - PureScript FFI
 - The Validator
+- Nix overlays
 - Building a Nix flake for a Plutus project
 - Compiling to Plutus Core
 
