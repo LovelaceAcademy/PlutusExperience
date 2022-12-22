@@ -40,15 +40,13 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 mkdir plutus-project
 cd plutus-project
 git init
-nix flake init --template github:LovelaceAcademy/templates#haskell-nix
+nix flake init --template github:LovelaceAcademy/nix-templates#haskell-nix
 git status
 ```
 
 ```
 ...
         new file:   .gitignore
-        new file:   LICENSE
-        new file:   Setup.hs
         new file:   flake.lock
         new file:   flake.nix
         new file:   hello.cabal
@@ -81,11 +79,14 @@ executable hello
 ```nix
 {
   # ...
-  outputs = { self, utils, haskellNix, ... }@inputs:
+  outputs = { self, utils, ... }@inputs:
     utils.apply-systems
       {
         inherit inputs;
-        overlays = [ haskellNix.overlay ];
+        # TODO support additional systems
+        #  right now we can't afford to test every other system
+        systems = [ "x86_64-linux" "aarch64-linux" ];
+        overlays = [ inputs.haskell-nix.overlay ];
       }
       ({ pkgs, system, ... }:
         let
@@ -109,14 +110,18 @@ executable hello
 # nix/hix.nix
 {pkgs, ...}: {
   # name = "project-name";
-  compiler-nix-name = "ghc8107"; # Version of GHC to use
+  
+  # We use the latest supported and cached version
+  # from github:input-output-hk/haskell.nix
+  compiler-nix-name = "ghc925";
 
-  crossPlatforms = p: pkgs.lib.optionals pkgs.stdenv.hostPlatform.isx86_64 ([
-    p.mingwW64
-    p.ghcjs
-  ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-    p.musl64
-  ]);
+  # Enable for cross-platform build
+  # crossPlatforms = p: pkgs.lib.optionals pkgs.stdenv.hostPlatform.isx86_64 ([
+  #   p.mingwW64
+  #   p.ghcjs
+  # ] ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+  #   p.musl64
+  # ]);
 
   # Tools to include in the development shell
   shell.tools.cabal = "latest";
