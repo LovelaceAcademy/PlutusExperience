@@ -28,6 +28,48 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 2. Nix flakes (module 3)
 3. PureScript (modules 2-5)
 
+# Nix Overlays
+
+# Differences between Haskell and PureScript
+
+In Haskell (GHC) we need to use extensions to enable some builtin PureScript features.
+
+Eg: To create custom kinds we need some extensions
+
+```purescript
+-- PureScript
+data Token
+
+-- it means Ada type has kind Token
+foreign import data Ada :: Token 
+
+data Value :: forall k. k -> Type -> Type
+data Value a b = Value b
+
+value1 :: Value Ada Int
+value1 = Value 5
+```
+
+```haskell
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+module Main where
+
+data Token = Ada
+
+type Value :: forall k. k -> * -> *
+data Value a b = MkValue b
+
+value1 :: Value Ada Int
+value1 = MkValue 5
+```
+
+There are more differences, but in general the compiler will let you know.
+
+[Differences from Haskell](https://github.com/purescript/documentation/blob/master/language/Differences-from-Haskell.md) describes in one page the differences between the languages.
+
 # Haskell Nix
 
 ## Why Haskell Nix
@@ -37,8 +79,8 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ## Bootstrap
 
 ```bash
-mkdir plutus-project
-cd plutus-project
+mkdir haskell-project
+cd haskell-project
 git init
 nix flake init --template github:LovelaceAcademy/nix-templates#haskell-nix
 git status
@@ -181,6 +223,99 @@ Hello, World!
 ```
 
 # Adding Plutus
+
+## Bootstrap
+
+```bash
+mkdir plutus-project
+cd plutus-project
+git init
+nix flake init --template github:LovelaceAcademy/nix-templates#plutus
+git status
+```
+
+```
+...
+        new file:   .gitignore
+        new file:   cabal.project
+        new file:   flake.lock
+        new file:   flake.nix
+        new file:   hello.cabal
+        new file:   nix/hix.nix
+        new file:   nix/serve-docs.nix
+        new file:   src/hello.hs
+```
+
+## hello.hs
+
+```haskell
+```
+
+
+## flake.nix
+
+```nix
+{
+  # ...
+  inputs.iohk-nix.url = "github:input-output-hk/iohk-nix";
+  inputs.CHaP.url = "github:input-output-hk/cardano-haskell-packages?ref=repo";
+  inputs.CHaP.flake = false;
+  # to generate docs
+  inputs.plutus.url = "github:input-output-hk/plutus";
+  # ...
+  outputs = { self, utils, ... }@inputs:
+    utils.apply-systems
+      {
+        # ...
+        overlays = [
+          inputs.haskell-nix.overlay
+          # plutus runtime dependency
+          inputs.iohk-nix.overlays.crypto
+        ];
+      }
+      ({ pkgs, system, ... }@context:
+        let
+          hixProject = pkgs.haskell-nix.hix.project {
+            # ...
+            inputMap = { "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP; };
+            modules = [
+              (_: {
+                # See input-output-hk/iohk-nix#488
+                packages.cardano-crypto-praos.components.library.pkgconfig =
+                  pkgs.lib.mkForce [ [ pkgs.libsodium-vrf ] ];
+                packages.cardano-crypto-class.components.library.pkgconfig =
+                  pkgs.lib.mkForce [ [ pkgs.libsodium-vrf pkgs.secp256k1 ] ];
+              })
+            ];
+          };
+          hixFlake = hixProject.flake { };
+          serve-docs = import ./nix/serve-docs.nix inputs context {
+            inherit hixProject;
+            additionalPkgs = [ "cardano-api" ];
+          };
+        in
+        # Flake definition follows hello.cabal
+        {
+          inherit (hixFlake) apps checks;
+          legacyPackages = pkgs;
+
+          packages = hixFlake.packages // {
+            inherit serve-docs;
+          };
+
+          devShell = pkgs.mkShell {
+            inputsFrom = [
+              hixFlake.devShell
+            ];
+            buildInputs = [
+              self.packages.${system}.serve-docs
+            ];
+          };
+        });
+        # ...
+```
+
+## hello.hs
 
 
 
