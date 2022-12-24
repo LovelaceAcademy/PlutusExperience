@@ -30,7 +30,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Nix Overlays
 
-# Differences between Haskell and PureScript
+## Differences between Haskell and PureScript
 
 In Haskell (GHC) we need to use extensions to enable some builtin PureScript features.
 
@@ -249,8 +249,19 @@ git status
 ## hello.hs
 
 ```haskell
-```
+-- ...
+validator :: BuiltinData -> BuiltinData -> BuiltinData -> ()
+validator datum redeemer context = ()
 
+validator' :: Validator
+validator' = mkValidatorScript $$(compile [||validator||])
+
+serialise :: Validator -> PlutusScript PlutusScriptV2
+serialise val = PlutusScriptSerialised $ DBS.toShort $ DBL.toStrict $ CS.serialise $ val
+
+main :: IO ()
+main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
+```
 
 ## flake.nix
 
@@ -294,32 +305,12 @@ git status
             additionalPkgs = [ "cardano-api" ];
           };
         in
-        # Flake definition follows hello.cabal
-        {
-          inherit (hixFlake) apps checks;
-          legacyPackages = pkgs;
-
-          packages = hixFlake.packages // {
-            inherit serve-docs;
-          };
-
-          devShell = pkgs.mkShell {
-            inputsFrom = [
-              hixFlake.devShell
-            ];
-            buildInputs = [
-              self.packages.${system}.serve-docs
-            ];
-          };
-        });
         # ...
+}
 ```
-
-## hello.hs
-
-
 
 # Breakthrough
 
 ## Exercise 
 
+ Use the compiled plutus core in a Cardano preview net transaction
