@@ -77,6 +77,8 @@ in
 
 [More on overlays](https://nixos.org/manual/nixpkgs/stable/#chap-overlays)
 
+# Haskell
+
 ## Differences between Haskell and PureScript
 
 In Haskell (GHC) we need to use extensions to enable some builtin PureScript features.
