@@ -30,6 +30,53 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Nix Overlays
 
+## Example
+
+Overlay is a feature of nixpkgs (and some flake packages) to allow you to add/override set attributes:
+
+```nix
+let pkgs = import <nixpkgs> {
+    overlays = [
+        (self: super: {
+          boost = super.boost.override {
+            python = self.python3;
+          };
+        })
+    ];
+};
+in
+    # pkgs.boost with python3
+    pkgs.boost;
+```
+
+`apply-systems` also receive an `overlays` attribute that apply overlays in the given inputs:
+
+
+```nix
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.utils.url = "github:ursi/flake-utils";
+  outputs = { self, utils, ... }@inputs:
+    utils.apply-systems
+      {
+        inherit inputs;
+        overlays = [
+            (self: super: {
+              ls = super.sl;
+            })
+        ];
+      }
+      ({ pkgs, ... }: {
+        # Try `ls` in the `nix develop` shell ;-)
+        devShells.default = pkgs.mkShell {
+            buildInputs = [ pkgs.ls ];
+        };
+      });
+}
+```
+
+[More on overlays](https://nixos.org/manual/nixpkgs/stable/#chap-overlays)
+
 ## Differences between Haskell and PureScript
 
 In Haskell (GHC) we need to use extensions to enable some builtin PureScript features.
