@@ -296,23 +296,6 @@ git status
         new file:   src/hello.hs
 ```
 
-## hello.hs
-
-```haskell
--- ...
-validator :: BuiltinData -> BuiltinData -> BuiltinData -> ()
-validator datum redeemer context = ()
-
-validator' :: Validator
-validator' = mkValidatorScript $$(compile [||validator||])
-
-serialise :: Validator -> PlutusScript PlutusScriptV2
-serialise val = PlutusScriptSerialised $ DBS.toShort $ DBL.toStrict $ CS.serialise $ val
-
-main :: IO ()
-main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
-```
-
 ## flake.nix
 
 ```nix
@@ -357,6 +340,59 @@ main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
         in
         # ...
 }
+```
+
+## hello.cabal and cabal.project
+
+```cabal
+-- cabal.project
+-- ...
+repository cardano-haskell-packages
+  url: https://input-output-hk.github.io/cardano-haskell-packages
+  secure: True
+  root-keys:
+    3e0cce471cf09815f930210f7827266fd09045445...
+-- ...
+packages: ./.
+
+package *
+  -- Reduce build times, set True for production
+  optimization: False
+-- ...
+```
+
+```cabal
+-- hello.cabal
+-- ...
+executable hello
+  import: lang
+  hs-source-dirs: src
+  main-is: hello.hs
+  build-depends:
+      base
+    , bytestring
+    , cardano-api
+    , plutus-ledger-api
+    , plutus-tx
+    , plutus-tx-plugin
+    , serialise
+```
+
+## hello.hs
+
+```haskell
+-- ...
+validator :: BuiltinData -> BuiltinData -> BuiltinData -> ()
+validator datum redeemer context = ()
+
+validator' :: Validator
+validator' = mkValidatorScript $$(compile [||validator||])
+
+serialise :: Validator -> PlutusScript PlutusScriptV2
+serialise val = PlutusScriptSerialised $ DBS.toShort $ DBL.toStrict $ CS.serialise $ val
+
+main :: IO ()
+main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
 ```
 
 # Breakthrough
