@@ -395,6 +395,10 @@ main :: IO ()
 main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
 ```
 
+[Haskell lazy evaluation](https://wiki.haskell.org/Lazy_evaluation)
+
+[PureScript lazy evaluation](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/02-FP-Philosophical-Foundations/04-Lazy-vs-Strict.html)
+
 # Breakthrough
 
 ## Exercise 
