@@ -404,3 +404,10 @@ main = DBL.putStr $ textEnvelopeToJSON Nothing $ serialise validator'
 ## Exercise 
 
  Use the compiled plutus core in a Cardano preview net transaction
+
+## Bootstrap
+
+```bash
+git clone https://github.com/input-output-hk/cardano-world.git
+cd cardano-world
+```
