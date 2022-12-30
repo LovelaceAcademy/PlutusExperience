@@ -433,3 +433,11 @@ export MAGIC="--testnet-magic 2"
 ./result/bin/cardano-cli transaction sign --tx-body-file tx.body $MAGIC --signing-key-file wallet.skey --out-file tx.signed
 ./result/bin/cardano-cli transaction submit $MAGIC --tx-file tx.signed
 ```
+
+## References and Links
+
+- [Faucet](https://docs.cardano.org/cardano-testnet/tools/faucet)
+- [Nix Standard](https://github.com/divnix/std/)
+- [Pioneer Lecture #3](https://github.com/klarkc/plutus-pioneer-program/tree/main)
+- [Apexaverse scripts](https://github.com/Apexaverse-metaverse/P2E/tree/main/scripts)
+- [Cardano Node Babbage Script](https://github.com/input-output-hk/cardano-node/blob/cd0c2f81928461ae2253fe2f78d093b104ab50bd/scripts/babbage/example-babbage-script-usage.sh)
