@@ -6,7 +6,7 @@ author: Walker Leite
 
 ## Getting Started
 
-In this module we'll check the Plutus Validator and we'll compile our first smart contract in Haskell.
+In this module we'll check the Plutus Validator and we'll compile and use our first smart contract in Haskell.
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
