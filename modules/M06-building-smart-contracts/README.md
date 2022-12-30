@@ -412,25 +412,67 @@ git clone https://github.com/input-output-hk/cardano-world.git
 cd cardano-world
 ```
 
-## Bash Commands
+## Cardano Node
 
 ```bash
-# TUI interface
+# User interface
 nix run github:divnix/std
 
 # CLI
 nix run github:divnix/std -- list
 DATA_DIR=./data SOCKET_PATH=node.socket ENVIRONMENT=preview nix run github:divnix/std -- //cardano/entrypoints/cardano-node:run
+```
+
+## Cardano CLI
+
+```bash
+nix run github:divnix/std -- //cardano/packages/cardano-cli:build
 export CARDANO_NODE_SOCKET_PATH=./node.socket
 export MAGIC="--testnet-magic 2"
-./result/bin/cardano-cli address key-gen --verification-key-file wallet.vkey --signing-key-file wallet.skey
-./result/bin/cardano-cli address build --payment-verification-key-file wallet.vkey --out-file wallet.addr $MAGIC
+
+./result/bin/cardano-cli address key-gen\
+    --verification-key-file wallet.vkey\
+    --signing-key-file wallet.skey\
+
+./result/bin/cardano-cli address build\
+    --payment-verification-key-file wallet.vkey\
+    --out-file wallet.addr $MAGIC
+
+./result/bin/cardano-cli address build $MAGIC\
+    --payment-script-file hello.plutus\
+    --out-file hello.addr
+
 ./result/bin/cardano-cli query tip $MAGIC
+./result/bin/cardano-cli query protocol-parameters $MAGIC --out-file protocol-parameters.json
 ./result/bin/cardano-cli query utxo $MAGIC --address $(cat wallet.addr)
 ./result/bin/cardano-cli query utxo $MAGIC --address $(cat hello.addr)
-./result/bin/cardano-cli transaction build $MAGIC --babbage-era --tx-in FaucetTxHash#FaucetTxIx --change-address $(cat wallet.addr) --tx-out "$(cat hello.addr) 7000000 lovelace" --tx-out-inline-datum-file unit.json --tx-out-reference-script-file hello.plutus --out-file tx.body
-./result/bin/cardano-cli transaction build $MAGIC --babbage-era --tx-in WalletTxHash#WalletTxIx --tx-in-collateral TxHash#TxIx --tx-in HelloTxHash#HelloTxIx --spending-tx-in-reference HelloTxHash#HelloTxIx --spending-plutus-script-v2 --spending-reference-tx-in-inline-datum-present --spending-reference-tx-in-redeemer-file unit.json --change-address $(cat wallet.addr) --protocol-params-file protocol-parameters.json --out-file tx.body
-./result/bin/cardano-cli transaction sign --tx-body-file tx.body $MAGIC --signing-key-file wallet.skey --out-file tx.signed
+
+./result/bin/cardano-cli transaction build $MAGIC\
+    --babbage-era\
+    --tx-in FaucetTxHash#FaucetTxIx\
+    --change-address $(cat wallet.addr)\
+    --tx-out "$(cat hello.addr) 7000000 lovelace"\
+    --tx-out-inline-datum-file unit.json\
+    --tx-out-reference-script-file hello.plutus\
+    --out-file tx.body
+
+./result/bin/cardano-cli transaction build $MAGIC\
+    --babbage-era --tx-in WalletTxHash#WalletTxIx\
+    --tx-in-collateral TxHash#TxIx\
+    --tx-in HelloTxHash#HelloTxIx\
+    --spending-tx-in-reference HelloTxHash#HelloTxIx\
+    --spending-plutus-script-v2\
+    --spending-reference-tx-in-inline-datum-present\
+    --spending-reference-tx-in-redeemer-file unit.json\
+    --change-address $(cat wallet.addr)\
+    --protocol-params-file protocol-parameters.json\
+    --out-file tx.body
+
+./result/bin/cardano-cli transaction sign $MAGIC\
+    --tx-body-file tx.body\
+    --signing-key-file wallet.skey\
+    --out-file tx.signed
+
 ./result/bin/cardano-cli transaction submit $MAGIC --tx-file tx.signed
 ```
 
