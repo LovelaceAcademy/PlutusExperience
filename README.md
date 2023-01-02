@@ -54,12 +54,13 @@ To run anyting on this repository, you'll need to have:
 - IO/Effect
 - Contract monad
 
-## Module 6 - Building Smart Contracts
+## [Module 6 - Building Smart Contracts](modules/M06-building-smart-contracts)
 
-- PureScript FFI
 - The Validator
+- Nix overlays
 - Building a Nix flake for a Plutus project
 - Compiling to Plutus Core
+- Building a transaction and using the Contract
 
 ## Module 7 - Jupiter
 
