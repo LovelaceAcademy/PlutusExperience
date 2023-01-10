@@ -179,7 +179,7 @@ foreign import script :: String
 ### Bootstrap
 
 ```bash
-cd modules/08-bring-it-on
+cd modules/M08-bring-it-on
 nix flake init -t github:LovelaceAcademy/cardano-transaction-lib
 git init
 git add --all
