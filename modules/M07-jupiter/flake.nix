@@ -1,6 +1,7 @@
 {
   inputs = {
     purs-nix.url = "github:purs-nix/purs-nix";
+    ps-tools.follows = "purs-nix/ps-tools";
     nixpkgs.follows = "purs-nix/nixpkgs";
     utils.url = "github:ursi/flake-utils";
   };
@@ -13,7 +14,7 @@
     in
     utils.apply-systems
       { inherit inputs systems; }
-      ({ system, pkgs, ... }:
+      ({ system, pkgs, ps-tools, ... }:
         let
           purs-nix = inputs.purs-nix { inherit system; };
           ps = purs-nix.purs
@@ -60,9 +61,9 @@
                     ps-command
                     # optional devShell tools
                     dev
-                    # ps-tools.for-0_15.purescript-language-server
+                    ps-tools.for-0_15.purescript-language-server
                     # purs-nix.esbuild
-                    # purs-nix.purescript
+                    purs-nix.purescript
                     # nodejs
                   ];
               };
