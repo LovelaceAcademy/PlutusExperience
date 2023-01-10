@@ -32,9 +32,24 @@
               # foreign.Main.node_modules = [];
             };
           ps-command = ps.command { };
+          purs-watch = pkgs.writeShellApplication {
+            name = "purs-watch";
+            runtimeInputs = with pkgs; [ entr ps-command ];
+            text = "find src | entr -s 'echo building && purs-nix compile'";
+          };
+          vite = pkgs.writeShellApplication {
+            name = "vite";
+            runtimeInputs = with pkgs; [ nodejs ];
+            text = "npx vite --open";
+          };
+          dev = pkgs.writeShellApplication {
+            name = "dev";
+            runtimeInputs = with pkgs; [ purs-watch vite concurrently ];
+            text = "concurrently purs-watch vite";
+          };
         in
         {
-          packages.default = ps.output { };
+          packages.default = ps.bundle { };
 
           devShells.default =
             pkgs.mkShell
@@ -44,6 +59,7 @@
                   [
                     ps-command
                     # optional devShell tools
+                    dev
                     # ps-tools.for-0_15.purescript-language-server
                     # purs-nix.esbuild
                     # purs-nix.purescript
