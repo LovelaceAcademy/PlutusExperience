@@ -44,4 +44,6 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 ## Bootstrap
 
-
+```bash
+nix flake init -t github:LovelaceAcademy/nix-templates#purs-nix
+```
