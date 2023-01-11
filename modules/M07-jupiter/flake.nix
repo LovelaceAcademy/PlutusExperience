@@ -28,6 +28,7 @@
                   prelude
                   console
                   effect
+                  halogen
                 ];
               # FFI dependencies
               # foreign.Main.node_modules = [];
