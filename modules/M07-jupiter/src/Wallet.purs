@@ -1,20 +1,36 @@
 module Wallet (component) where
 
-import Prelude (($), unit, pure)
-import Data.Function (const)
+import Prelude (($), unit, pure, bind, discard)
+import Control.Monad.State (get, modify_)
+import Data.Maybe (Maybe (Nothing, Just))
+import Effect.Class (class MonadEffect)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Wallet.Api (Cbor, Api)
+import Wallet.Api.Aff (getBalance)
 
-component :: forall q o m b. H.Component q b o m
+type State = { api :: Api, balance :: Maybe Cbor }
+
+component :: forall q o m.  MonadEffect m => MonadAff m => H.Component q Api o m
 component = H.mkComponent {
-  initialState: const unit,
+  initialState: \api -> { api, balance: Nothing },
   eval: case _ of
-    (H.Initialize x) -> pure x
-    (H.Finalize x) -> pure x
-    (H.Receive _ x) -> pure x
-    (H.Action _ x) -> pure x
-    (H.Query _ fn) -> pure $ fn unit,
-  render: const $ HH.div_ [
-    HH.text "Hello World!"
-  ]
+    (H.Initialize a) -> do
+      { api } <- get
+      balance <- liftAff $ getBalance api
+      modify_ $ _ { balance = Just balance }
+      pure a
+    (H.Finalize a) -> pure a
+    (H.Receive _ a) -> pure a
+    (H.Action _ a) -> pure a
+    (H.Query _ fn) -> pure $ fn unit
+  , render: case _ of
+    { balance: (Just value) } -> HH.div_ [
+      HH.span_ [HH.text "Balance: "],
+      HH.span_ [HH.text  value]
+    ]
+    _ -> HH.div_ [
+      HH.text "Loading balance..."
+    ]
 }

@@ -25,6 +25,7 @@
               dependencies =
                 with purs-nix.ps-pkgs;
                 [
+                  debug
                   prelude
                   console
                   effect
