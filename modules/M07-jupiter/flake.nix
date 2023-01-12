@@ -29,6 +29,7 @@
                   console
                   effect
                   halogen
+                  js-promise-aff
                 ];
               # FFI dependencies
               # foreign.Main.node_modules = [];
