@@ -1,6 +1,7 @@
-module Wallet.Api.Aff (enableWallet, getBalance) where
+module Wallet.Api.Aff (enableWallet, getUtxos) where
 
-import Control.Bind ((>>=))
+import Prelude (($), (>>=), bind)
+import Data.Traversable (traverse)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Promise.Aff (toAff)
@@ -10,5 +11,10 @@ import Web.HTML (Window)
 enableWallet :: Window -> WA.Name -> Aff WA.Api
 enableWallet window name = liftEffect (WA.enableWallet window name) >>= toAff
 
-getBalance :: WA.Api -> Aff WA.Cbor
-getBalance api = liftEffect (WA.getBalance api) >>= toAff
+getUtxos :: WA.Api -> Aff (Array WA.Utxo)
+getUtxos api = do
+  cbors <- getUtxos_ api
+  liftEffect $ traverse WA.fromHexToUtxo cbors
+
+getUtxos_ :: WA.Api -> Aff (Array WA.Cbor)
+getUtxos_ api = liftEffect (WA.getUtxos api)  >>= toAff 

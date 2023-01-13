@@ -1,5 +1,17 @@
 {
   "nodes": {
+    "csl": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-P47KjsFjDx7hi9b7n9OAOi96zda8rOBzVYlk1MrSAug=",
+        "type": "file",
+        "url": "https://esm.sh/@emurgo/cardano-serialization-lib-asmjs?sourcemap=inline"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://esm.sh/@emurgo/cardano-serialization-lib-asmjs?sourcemap=inline"
+      }
+    },
     "deadnix": {
       "inputs": {
         "fenix": "fenix",
@@ -469,6 +481,7 @@
     },
     "root": {
       "inputs": {
+        "csl": "csl",
         "nixpkgs": [
           "purs-nix",
           "nixpkgs"

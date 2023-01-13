@@ -4,6 +4,8 @@
     ps-tools.follows = "purs-nix/ps-tools";
     nixpkgs.follows = "purs-nix/nixpkgs";
     utils.url = "github:ursi/flake-utils";
+    csl.url = "https://esm.sh/@emurgo/cardano-serialization-lib-asmjs?sourcemap=inline";
+    csl.flake = false;
   };
 
   outputs = { self, utils, ... }@inputs:
@@ -33,7 +35,7 @@
                   js-promise-aff
                 ];
               # FFI dependencies
-              # foreign.Main.node_modules = [];
+              foreign."Wallet.Api".src = inputs.csl; 
             };
           ps-command = ps.command { };
           purs-watch = pkgs.writeShellApplication {
