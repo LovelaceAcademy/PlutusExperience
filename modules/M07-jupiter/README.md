@@ -47,3 +47,10 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ```bash
 nix flake init -t github:LovelaceAcademy/nix-templates#purs-nix
 ```
+
+## References and Links
+
+- [CIP-0030](https://github.com/cardano-foundation/CIPs/blob/6f50596b99b7de9ff8601553762566fde0ef7a30/CIP-0030/README.md)
+- [cardano-serialization-lib](https://github.com/Emurgo/cardano-serialization-lib)
+- [purescript-cip30](https://github.com/anton-k/purescript-cip30)
+- [purescript-cardano-serialization-lib](https://github.com/anton-k/purescript-cardano-serialization-lib)
