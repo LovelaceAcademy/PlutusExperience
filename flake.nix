@@ -7,21 +7,27 @@
   };
 
   outputs = { self, utils, ... }@inputs:
-    utils.apply-systems { inherit inputs; } ({ pkgs, purs-eval, patat, ... }: {
-      packages.default = pkgs.writeShellApplication {
-        name = "slide";
-        text = ''
-          patat "$@"
-        '';
-        runtimeInputs = with pkgs; [
-          purs-eval
-          patat
-          nodejs
-          haskellPackages.ghc
-          w3m
-        ];
-      };
-    });
+    utils.apply-systems
+      {
+        inherit inputs;
+        # limited by purs-nix
+        systems = [ "x86_64-linux" ];
+      }
+      ({ pkgs, purs-eval, patat, ... }: {
+        packages.default = pkgs.writeShellApplication {
+          name = "slide";
+          text = ''
+            patat "$@"
+          '';
+          runtimeInputs = with pkgs; [
+            purs-eval
+            patat
+            nodejs
+            haskellPackages.ghc
+            w3m
+          ];
+        };
+      });
 
   nixConfig = {
     extra-substituters = [
