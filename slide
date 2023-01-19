@@ -1,2 +1,3 @@
 #!/usr/bin/bash
-nix run . -- "$@"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+nix run $SCRIPT_DIR -- "$@"
