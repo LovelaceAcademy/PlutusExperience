@@ -25,6 +25,7 @@
             nodejs
             haskellPackages.ghc
             w3m
+            nodePackages.prettier
           ];
         };
       });
