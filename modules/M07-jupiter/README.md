@@ -34,6 +34,317 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Row Types and Records
 
+## Remembering Kinds
+
+```purescript
+module Main where
+
+import Prelude (($), Unit, show, discard)
+import Effect (Effect)
+import Effect.Console (log)
+
+-- concrete type
+type Name :: Type
+type Name = String
+
+-- concrete type
+data Dog :: Type
+data Dog = Dog Name
+
+-- high kinded type
+data Maybe :: Type -> Type
+data Maybe a = Nothing | Just a
+
+type MaybeDog :: Type
+type MaybeDog = Maybe Dog
+
+mayShowDog :: MaybeDog -> String
+mayShowDog Nothing = show "No dog :("
+mayShowDog (Just (Dog name)) = show name
+
+main :: Effect Unit
+main = do
+    log $ mayShowDog Nothing
+    log $ mayShowDog $ Just (Dog "Max")
+```
+
+## Problem
+
+What if we need to have way more dog attributes beyond name?
+
+We could use Sum Types:
+
+```purescript
+module Main where
+
+import Prelude (($), (<>), Unit, show)
+import Effect (Effect)
+import Effect.Console (log)
+
+type Name = String
+type Owner = Name
+type Age = Int
+data Dog = Dog Name Age Owner
+
+showDog :: Dog -> String
+showDog (Dog name age owner) =
+     show name
+  <> ", "
+  <> show age
+  <> ", "
+  <> show owner
+
+main :: Effect Unit
+main = log $ showDog $ Dog "Max" 2 "John"
+```
+
+It's a bit clunky but it works, what would be a better alternative?
+
+## Row Kind
+
+```purs
+data Row :: a -> Type
+data Row a = ( label :: a )
+
+type Dog :: Row Type
+type Dog = ( name :: String, age :: Int, owner :: String )
+
+-- ( label :: a ) is the type constructor for Row at language level ;)
+-- name, age and owner are so called "indexed-labels"
+-- !! because `Row Type` we can only have concrete types in labels) !!
+```
+
+> :bulb: You can see a `Row Type` like instructions on how to create a dog definition.
+
+Great! But having a type that can't be used to build definitions is not so useful. How can I build a type and a value of `Dog` `Type`?
+
+## Records
+
+```purs
+data Record :: Row Type -> Type
+```
+
+`Record` constructor: Given a defined `Row Type`, give me a corresponding concrete `Type`
+
+```purs
+type Dog :: Type
+type Dog = Record ( name :: String, age :: Int, owner :: String )
+
+-- like Row Type, Record has a syntax suggar constructor { }
+type Dog :: Type
+type Dog = { name :: String, age :: Int, owner :: String }
+```
+
+```purescript
+module Main where
+
+import Prelude (($), (<>), Unit, show)
+import Effect (Effect)
+import Effect.Console (log)
+
+type Dog = { name :: String, age :: Int, owner :: String }
+
+showDog :: Dog -> String
+showDog dog@{ name, owner: ownerName } =
+     show name
+  <> ", "
+  <> show dog.age
+  <> ", "
+  <> show ownerName
+
+main :: Effect Unit
+main = log $ showDog
+  { name: "Max"
+  , age: 2
+  , owner: "John"
+  }
+```
+
+## Optional field problem 1
+
+What if `owner` is optional?
+
+```purs
+main :: Effect Unit
+main = do
+  log $ showDog
+    { name: "Max"
+    , age: 2
+    , owner: "John"
+    }
+  log $ showDog
+    { name: "Lily"
+    , age: 3
+    }
+```
+
+```
+  Type of expression lacks required label owner.
+
+while checking that expression { name: "Lily"
+                               , age: 3
+                               }
+  has type { age :: Int
+           , name :: String
+           , owner :: String
+           }
+while applying a function showDog
+  of type { age :: Int
+          , name :: String
+          , owner :: String
+          }
+          -> String
+  to argument { name: "Lily"
+              , age: 3
+              }
+in value declaration main
+```
+
+
+## Optional field problem 2
+
+What if `showOwner` needs to only handle only owner?
+
+```purs
+type Dog = { name :: String, age :: Int, owner :: String }
+type Ownership = { owner :: String }
+
+--...
+
+showOwner ::  Ownership -> String
+showOwner { owner } = show owner
+
+main :: Effect Unit
+main = let
+  dog = { name: "Max"
+        , age: 2
+        , owner: "John"
+        }
+  in do
+    log $ showDog dog
+    log $ showOwner dog
+```
+
+```
+  Type of expression contains additional label age.
+
+while checking that type { age :: Int
+                         , name :: String
+                         , owner :: String
+                         }
+  is at least as general as type { owner :: String
+                                 }
+while checking that expression dog
+  has type { owner :: String
+           }
+in value declaration main
+```
+
+## Open / Closed Rows
+
+Closed Row:
+
+```purs
+type Dog :: Row Type
+type Dog = ( name :: String, age :: Int, owner :: String )
+```
+
+Open Row:
+
+```purs
+type Dog :: Row Type -> Row Type
+type Dog a = ( name :: String, age :: Int | a )
+```
+
+> :bulb: Dog is a high kinded type, it needs `a`, which must have kind `Row Type`, to define its concrete `Row Type`.
+
+```purs
+type Ownership :: Row Type
+type Ownership = ( owner :: String )
+
+type Dog :: Row Type -> Row Type
+type Dog a = ( name :: String, age :: Int | a ) 
+
+type DogWithOwner :: Row Type
+type DogWithOwner = Dog Ownership
+```
+
+> :bulb: Remember that a `Row Type` is the instruction on how to build a `Type` using `Record :: Row Type -> Type`.
+
+## Open / Closed Records
+
+Closed Record:
+
+```purs
+type Dog :: Type
+type Dog = { name :: String, age :: Int, owner :: String }
+```
+
+Open Record:
+
+```purs
+type Dog :: Row Type -> Type
+type Dog a = { name :: String, age :: Int | a }
+```
+
+> :bulb: Dog is a high kinded type, it needs `a`, which must have kind `Row Type`, to define its concrete `Type`
+
+```purs
+type Ownership :: Row Type
+type Ownership = ( owner :: String )
+
+type Dog :: Row Type -> Type
+type Dog a = { name :: String, age :: Int | a }
+
+type DogWithOwner :: Type
+type DogWithOwner = Dog Ownership
+```
+
+`DogWithOwner` is the concrete `Type` of a dog, result of applying `Ownership` to the `Dog` HKT, which apply the received `Ownership` to `Record :: Row Type -> Type` as first argument.
+
+In other words, we use the `Ownership` `Row Type` to tell `Dog` how to build a `Type` using `Record` type constructor.
+
+## Solution
+
+```purescript
+module Main where
+
+import Prelude (($), (<>), Unit, show, discard)
+import Effect (Effect)
+import Effect.Console (log)
+
+type Ownership :: Row Type
+type Ownership = ( owner :: String )
+
+type Dog :: Row Type -> Type
+type Dog a = { name :: String, age :: Int | a }
+
+type DogWithOwner :: Type
+type DogWithOwner = Dog Ownership
+
+showDog :: forall a. Dog a -> String
+showDog { name, age } = show name <> ", " <> show age
+
+showOwner :: forall a. { owner :: String | a } -> String
+showOwner { owner } = show owner
+
+main :: Effect Unit
+main = let
+  dog1 = { name: "Max"
+         , age: 2
+         , owner: "John"
+         }
+  dog2 = { name: "Lily"
+         , age: 3
+         }
+  in do
+    log $ showDog dog1
+    log $ showDog dog2
+    log $ showOwner dog1
+    -- uncomment to throw "lacks required label owner" 
+    -- log $ showOwner dog2
+```
+
 # Monad Transformers
 
 # Aff
