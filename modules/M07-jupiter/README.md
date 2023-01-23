@@ -345,6 +345,10 @@ main = let
     -- log $ showOwner dog2
 ```
 
+## Links
+
+- [Jordan's Reference - Records](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/11-Syntax/01-Basic-Syntax/src/05-Records)
+
 # Monad Transformers
 
 # Aff
