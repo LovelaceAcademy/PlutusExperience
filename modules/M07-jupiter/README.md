@@ -203,7 +203,7 @@ in value declaration main
 
 ## Optional field problem 2
 
-What if `showOwner` needs to only handle only owner?
+What if `showOwner` needs handle only owner?
 
 ```purs
 type Dog = { name :: String, age :: Int, owner :: String }
