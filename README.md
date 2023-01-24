@@ -65,8 +65,8 @@ To run anyting on this repository, you'll need to have:
 ## [Module 7 - Jupiter](modules/M07-jupiter)
 
 - Row Types and Records
-- Monad Transformers
-- Aff
+- MonadEffect
+- Aff and MonadAff
 - PureScript Halogen
 - Web App to show Wallet Funds
 
