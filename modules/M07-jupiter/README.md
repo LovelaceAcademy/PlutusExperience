@@ -418,7 +418,8 @@ instance Applicative Contract where
   pure value = Contract (pure value)
 instance Monad Contract
 
-instance MonadEffect (Contract) where
+instance MonadEffect (Contract) where 
+  --liftEffect :: forall m a. MonadEffect m => Effect a -> m a
   liftEffect = Contract
 
 c1 :: Contract Boolean
