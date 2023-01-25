@@ -349,9 +349,107 @@ main = let
 
 - [Jordan's Reference - Records](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/11-Syntax/01-Basic-Syntax/src/05-Records)
 
-# Monad Transformers
+# Lifting and async
 
-# Aff
+## Problem
+
+Remember the `Contract` monad from module 5?
+
+```purs
+buildTx :: Inputs -> Outputs -> Redeemer -> Validator -> Contract Boolean
+
+data Contract a = Contract a
+```
+
+What if we need to produce a side-effect in buildTx?
+
+```purs
+data Contract a = Contract (Effect a) 
+
+runContract :: forall a. Contract a -> Effect a
+runContract (Contract eff) = log ">running effects" *> eff
+```
+
+So we could `runContract buildTx`, right? Well, we can't:
+
+```purs
+buildTx :: Contract Boolean
+buildTx = do
+  log ">building tx"
+  pure true
+```
+
+```
+Could not match type
+
+    Effect
+
+  with type
+
+    Contract
+```
+
+It happens because log returns `Effect`, not `Contract`.
+
+## Solution
+
+![jupiter](images/001.gif)
+
+## Solution - MonadEffect
+
+```purescript
+module Main where
+
+import Prelude
+import Effect (Effect)
+import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Console (log)
+
+data Contract a = Contract (Effect a)
+
+derive instance Functor Contract
+instance Apply Contract where
+  apply = ap
+instance Bind Contract where
+  --bind :: forall a b. m a -> (a -> m b) -> m b
+  bind (Contract eff) f = Contract $ eff >>= \v -> case f v of
+    Contract eff' -> eff'
+instance Applicative Contract where
+  pure value = Contract (pure value)
+instance Monad Contract
+
+instance MonadEffect (Contract) where
+  liftEffect = Contract
+
+c1 :: Contract Boolean
+c1 = do
+  liftEffect $ log ">running contract c1"
+  pure true
+
+c2 :: Contract Boolean
+c2 = do
+  liftEffect $ log ">running contract c2"
+  pure false
+
+runContract :: forall a. Contract a -> Effect a
+runContract (Contract eff) = log ">running effects" *> eff
+
+main :: Effect Unit
+main = do
+  result1 <- runContract c1
+  log $ ">result1: " <> show result1
+  result2 <- runContract c2
+  log $ ">result2: " <> show result2
+```
+
+## Aff 
+
+## MonadAff
+
+## Links
+
+- [Jordan's Reference - MonadEffect](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/21-Hello-World/02-Effect-and-Aff/src/03-Aff/02-Lifting-Monads/01-MonadEffect.html#monadeffect-1)
+- [Jordan's Reference - Aff](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/21-Hello-World/02-Effect-and-Aff/src/03-Aff/index.html)
 
 # Halogen
 
