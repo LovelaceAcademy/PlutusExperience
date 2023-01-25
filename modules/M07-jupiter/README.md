@@ -4,7 +4,7 @@ author: Walker Leite
 patat:
   eval:
     purescript:
-      command: purs-eval | node --experimental-network-imports --input-type module | prettier --parser html
+      command: purs-eval | node --experimental-network-imports --input-type module
 ---
 # Introduction
 
@@ -445,7 +445,62 @@ main = do
 
 ## Aff 
 
-## MonadAff
+Aff is used to represent asynchronous  effects (similar to Promises, but with more features)
+
+```purs
+-- The computation may either error with an exception, or produce a result of type a.
+data Aff a
+
+```
+
+To launch it we use `launchAff_ :: forall a. Aff a -> Effect Unit`
+
+```purescript
+module Main where
+
+import Prelude
+
+import Data.Time.Duration (Milliseconds (Milliseconds))
+import Effect (Effect)
+import Effect.Aff (launchAff_, delay)
+import Effect.Console (log, logShow)
+import Effect.Class (liftEffect)
+import Fetch (fetch)
+
+main :: Effect Unit
+main = do
+  log "This is an Effect computation (Effect monadic context)"
+
+  launchAff_ do
+    { text } <- fetch "https://httpbin.org/uuid" {}
+    uuid <- text
+    liftEffect $ logShow uuid
+
+  launchAff_ do
+    liftEffect $ log "[other aff] start"
+    delay $ Milliseconds 1000.0
+    liftEffect $ log "[other aff] done"
+    
+  log "Program finished before async stuff ;)"
+```
+
+## Aff instances
+
+
+```purs
+-- Relevant instances, beyond Functor, Apply, Applicative, Bind and Monad
+
+MonadThrow Error Aff
+-- so it can throwError
+MonadError Error Aff
+-- so we can catchError
+MonadEffect Aff
+-- so we can liftEffect
+
+-- MonadAff, like MonadEffect, allows one yo lift from Aff to m
+class (MonadEffect m) <= MonadAff m
+  liftAff :: Aff ~> m
+```
 
 ## Links
 
