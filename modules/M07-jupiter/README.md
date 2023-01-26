@@ -4,7 +4,7 @@ author: Walker Leite
 patat:
   eval:
     purescript:
-      command: purs-eval | node --experimental-network-imports --input-type module
+      command: purs-eval | node --experimental-network-imports --input-type module | prettier --parser html
 ---
 # Introduction
 
