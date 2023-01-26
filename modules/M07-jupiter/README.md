@@ -10,7 +10,7 @@ patat:
 
 ## Getting Started
 
-In this module we'll see Row Types and Records, monad transformers, async computations (Aff) and we'll build a wallet webapp using Halogen.
+In this module we'll see Row Types and Records, monad lifting, async computations (Aff) and we'll build a wallet webapp using Halogen.
 
 To run this presentation type (you will need [nix](https://nixos.org)):
 
