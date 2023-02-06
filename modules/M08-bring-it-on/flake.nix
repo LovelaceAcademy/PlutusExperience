@@ -41,6 +41,7 @@
                 with purs-nix.ps-pkgs;
                 [
                   cardano-transaction-lib
+                  halogen
                 ];
               # FFI dependencies
               # TODO Affjax FFI should be in ctl-nix

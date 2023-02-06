@@ -10,12 +10,14 @@ import Contract.Config (ConfigParams)
 import Contract.Log (logInfo')
 import Contract.Monad (Contract, liftedM, liftedE, runContract)
 import Contract.PlutusData (PlutusData, unitDatum, unitRedeemer)
-import Contract.Transaction (submit, balanceAndSignTx, lookupTxHash)
+import Contract.Transaction (TransactionHash, submit, balanceTx, signTransaction, lookupTxHash)
 import Contract.TxConstraints as CT
 import Contract.ScriptLookups as SL
 import Contract.Value as V
-import Contract.Wallet (WalletSpec (UseKeys), PrivatePaymentKeySource (PrivatePaymentKeyValue), PrivatePaymentKey (PrivatePaymentKey))
+import Contract.Wallet (WalletSpec (UseKeys), PrivatePaymentKeySource (PrivatePaymentKeyValue), PrivatePaymentKey (PrivatePaymentKey), privateKeyFromBytes)
 import Contract.Utxos (utxosAt)
+import Contract.Transaction (_input)
+import Contract.Scripts (validatorHash)
 import Data.BigInt as BI
 import Data.Map as Map
 import Data.Array as Array
@@ -26,18 +28,15 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Plutus.Types.TransactionUnspentOutput (_input)
-import Scripts (validatorHash)
-import Serialization (privateKeyFromBytes)
-import Types.RawBytes (hexToRawBytes)
-import Types.Transaction (TransactionHash)
+import Ctl.Internal.Types.RawBytes (hexToRawBytes)
 
 data Action = SetDonatorKey String | SetVisitorKey String
 
 buildBalanceSignAndSubmitTx lookups constraints = do
   ubTx <- liftedE $ SL.mkUnbalancedTx lookups constraints
-  bsTx <- liftedM "Failed to balance/sign tx" $ balanceAndSignTx ubTx
-  txId <- submit bsTx
+  bsTx <- liftedE $ balanceTx ubTx
+  bsSiTx <- signTransaction bsTx
+  txId <- submit bsSiTx
   logInfo' $ "Tx ID: " <> show txId
   pure txId
 
@@ -58,8 +57,8 @@ give amount = do
 grab :: forall r. TransactionHash -> Contract r Unit
 grab txId = do
   validator <- liftEither $ toValidator
-  let scriptAddress = scriptHashAddress $ validatorHash validator
-  utxos <- (fromMaybe Map.empty) <$> (utxosAt scriptAddress)
+  let scriptAddress = scriptHashAddress (validatorHash validator) Nothing
+  utxos <- utxosAt scriptAddress
   utxo <- liftMaybe (error "Could not find any locked value") $ Array.head (lookupTxHash txId utxos)
   let
     txInput = view _input utxo
