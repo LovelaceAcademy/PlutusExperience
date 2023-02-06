@@ -32,8 +32,12 @@ To run this presentation type (you will need [nix](https://nixos.org)):
     - You should be familiar with Nix Flakes (module 3);
 3. PureScript
     - You should be familiar with Foreign Function Interface (module 7);
-    - You should be familiar with Monad Transformers (module 7);
+    - You should be familiar with MonadEffect, MonadAff (module 7);
     - You should be familiar with Halogen (module 7);
+
+Optional, but recommended:
+
+- [Monad Transforms](https://jordanmartinez.github.io/purescript-jordans-reference-site/content/21-Hello-World/05-Application-Structure/src/02-MTL/index.html) or [Monadic Adventures](https://book.purescript.org/chapter11.html).
 
 
 # Cardano Transaction Lib
