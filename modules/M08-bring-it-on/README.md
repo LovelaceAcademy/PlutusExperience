@@ -184,7 +184,7 @@ foreign import script :: String
 
 ```bash
 cd modules/M08-bring-it-on
-nix flake init -t github:LovelaceAcademy/cardano-transaction-lib
+nix flake init -t github:LovelaceAcademy/nix-templates#ctl-full
 git init
 git add --all
 nix develop
@@ -193,7 +193,7 @@ git add --all
 git commit -m "Initial commit"
 ```
 
-### CLI wallet on PreProd with covering funds
+### CLI wallet on Preview with covering funds
 
 - Create `donator.{skey,vkey,addr}` with given `cardano-cli`
 - Create `visitor.{skey,vkey,addr}` with given `cardano-cli`
