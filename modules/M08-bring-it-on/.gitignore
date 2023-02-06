@@ -5,3 +5,6 @@
 /dist
 /bundle.js
 /generated-docs
+/*.skey
+/*.vkey
+/*.addr
