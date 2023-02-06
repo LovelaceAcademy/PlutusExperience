@@ -1,5 +1,3 @@
-"use strict";
-
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -82,7 +80,7 @@ module.exports = {
       debug: true,
     }),
     new HtmlWebpackPlugin({
-      title: "ctl-scaffold",
+      title: "ctl-full",
       template: "./index.html",
       inject: false, // See stackoverflow.com/a/38292765/3067181
     }),

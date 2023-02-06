@@ -1,19 +1,10 @@
 {
-  "scripts": {
-    "dev": "concurrently --handle-input --restart-tries 10 npm:dev:purs npm:dev:webpack npm:dev:docs npm:dev:runtime",
-    "dev:purs": "purs-watch",
-    "dev:webpack": "BROWSER_RUNTIME=1 webpack serve --progress --open",
-    "dev:runtime": "runtime up",
-    "dev:docs": "purs-nix docs && http-server ./generated-docs/html -o",
-    "bundle": "BROWSER_RUNTIME=1 webpack --mode=production"
-  },
   "devDependencies": {
-    "concurrently": "^7.4.0",
     "html-webpack-plugin": "^5.5.0",
-    "http-server": "^14.1.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "webpack": "^5.67.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4",
+    "xhr2": "^0.2.1"
   }
 }
