@@ -53,14 +53,14 @@ Backend:            |
                     |
 Ogmius (WebSocket) -|- Ogmius Datum Cache
                     |
-             Plutus Server
+                  Kopu 
 ```
 
 - [CTL](https://github.com/Plutonomicon/cardano-transaction-lib) is a Purescript library/interface for building smart contract transactions on Cardano.
 - [CSL](https://github.com/Emurgo/cardano-serialization-lib) is a [WASM](https://developer.mozilla.org/en-US/docs/WebAssembly) library to serialize and unserialize plutus compatible data. We don't use it directly.
 - [Ogmius](https://github.com/CardanoSolutions/ogmios) is a service to query the blockchain using websocket protocol. We don't use it directly.
 - [Ogmius Datum Cache](https://github.com/mlabs-haskell/ogmios-datum-cache) is a service to store datum values for V1 (non-vasil) contracts. We don't use it directly.
-- [Plutus Server](https://github.com/Plutonomicon/cardano-transaction-lib/tree/develop/server): when using paramaterized contracts, Haskell is still required to build the validator using its meta-programming capabilities, this server is used for this.
+- [Kopu](https://cardanosolutions.github.io/kupo): is a chain-index to query the blockchain using HTTP protocol. We don't use it directly.
 
 ## The Contract Monad
 
@@ -184,7 +184,7 @@ foreign import script :: String
 
 ```bash
 cd modules/M08-bring-it-on
-nix flake init -t github:LovelaceAcademy/cardano-transaction-lib
+nix flake init -t github:LovelaceAcademy/nix-templates#ctl-full
 git init
 git add --all
 nix develop
@@ -193,7 +193,7 @@ git add --all
 git commit -m "Initial commit"
 ```
 
-### CLI wallet on PreProd with covering funds
+### CLI wallet on Preview with covering funds
 
 - Create `donator.{skey,vkey,addr}` with given `cardano-cli`
 - Create `visitor.{skey,vkey,addr}` with given `cardano-cli`
