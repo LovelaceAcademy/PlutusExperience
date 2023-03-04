@@ -3,11 +3,18 @@ module Test.Main where
 import Contract.Prelude
   ( ($)
   , (=<<)
+  , (<$>)
   , LogLevel (Trace)
   , Unit
   , flip
+  , bind
   )
 
+import Contract.Address
+  ( Address
+  , getWalletAddresses
+  )
+import Contract.Wallet (withKeyWallet)
 import Contract.Config (emptyHooks)
 import Contract.Test.Mote (TestPlanM, interpretWithConfig)
 import Contract.Test.Plutip
@@ -17,7 +24,17 @@ import Contract.Test.Plutip
   , testPlutipContracts
   , withWallets
   )
-import Contract.Test.Utils (exitCode, interruptOnSignal)
+import Contract.Test.Utils
+  ( ContractWrapAssertion
+  , Labeled
+  , exitCode
+  , interruptOnSignal
+  , withAssertions
+  , assertLossAtAddress'
+  , label
+  )
+import Contract.Monad (liftedM)
+import Data.Array (head)
 import Data.BigInt as DBI
 import Data.Maybe (Maybe (Just, Nothing))
 import Data.Posix.Signal (Signal(SIGINT))
@@ -72,17 +89,26 @@ config =
       { slotLength: Seconds 0.05 }
   }
 
+type AssertionParams = { donator :: Labeled Address }
+
 suite :: TestPlanM PlutipTest Unit
 suite = do
-  test "Print PubKey" do
+  test "locks 10ADA to the contract" do
     let
+      assertions :: AssertionParams -> Array (ContractWrapAssertion () Unit)
+      assertions { donator } =
+        [ assertLossAtAddress' donator $ DBI.fromInt 10_000_000
+        ]
       distribution :: InitialUTxOs
       distribution =
         [ DBI.fromInt 5_000_000
         , DBI.fromInt 2_000_000_000
         ]
-    withWallets distribution \_ -> do
-       contract
+    withWallets distribution \kw -> do
+       addr <- withKeyWallet kw $
+         liftedM "Failed to get donator address" $ head <$> getWalletAddresses
+       let donator = label addr "donator"
+       withAssertions (assertions { donator }) contract
 
 main :: Effect Unit
 main = interruptOnSignal SIGINT =<< launchAff do
