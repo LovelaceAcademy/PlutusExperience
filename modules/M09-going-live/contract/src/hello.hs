@@ -4,24 +4,23 @@
 module Main (main) where
 
 import Prelude (IO)
-import PlutusTx.Prelude (($), (==), Maybe (Nothing), Bool (True, False), Integer)
+import PlutusTx.Prelude (($), (==), Maybe (Nothing), Bool (True, False), Integer, error)
 import Cardano.Api.Shelley (PlutusScript (PlutusScriptSerialised), PlutusScriptV2)
 import Cardano.Api.SerialiseTextEnvelope (textEnvelopeToJSON)
 import qualified Codec.Serialise as CS
 import qualified Data.ByteString.Lazy as DBL
 import qualified Data.ByteString.Short as DBS
 import PlutusTx (compile, unstableMakeIsData)
+import PlutusTx.Builtins.Internal (BuiltinData)
 import Plutus.V2.Ledger.Api (Validator, ScriptContext, mkValidatorScript)
 import Plutus.Script.Utils.Typed (IsScriptContext (mkUntypedValidator))
 
-newtype MyDatum = MyDatum Integer
-unstableMakeIsData ''MyDatum
-newtype MyRedeemer = MyRedeemer Integer
-unstableMakeIsData ''MyRedeemer
+newtype Password = Password Integer
+unstableMakeIsData ''Password
 
-validator :: MyDatum -> MyRedeemer -> ScriptContext -> Bool
-validator _ (MyRedeemer n) _ | n == 42 = True 
-validator _ _ _ = False 
+validator :: BuiltinData -> Password -> ScriptContext -> Bool
+validator _ (Password n) _ | n == 42 = True 
+validator _ _ _ = error () 
 
 validator' :: Validator
 validator' = mkValidatorScript $$(compile [|| wrap ||])
