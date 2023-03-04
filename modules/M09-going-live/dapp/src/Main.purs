@@ -6,6 +6,7 @@ import Contract.Address (ownPaymentPubKeyHash)
 import Contract.Log (logInfo')
 import Contract.Monad (Contract, launchAff_, runContract)
 import Contract.Config (testnetEternlConfig)
+import Donation.Script
 
 contract :: Contract () Unit
 contract = logInfo' <<< show =<< ownPaymentPubKeyHash

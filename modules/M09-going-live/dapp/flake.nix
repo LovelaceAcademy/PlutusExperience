@@ -4,6 +4,7 @@
     nixpkgs.follows = "ctl-nix/nixpkgs";
     purs-nix.follows = "ctl-nix/purs-nix";
     utils.url = "github:ursi/flake-utils";
+    contract.url = "path:../contract";
   };
 
   outputs = { self, utils, ... }@inputs:
@@ -25,7 +26,7 @@
     in
     utils.apply-systems
       { inherit inputs systems overlays; }
-      ({ system, pkgs, ctl-nix, ... }:
+      ({ system, pkgs, ctl-nix, contract, ... }:
         let
           # Use purs from CTL instead from nixpkgs
           purs = pkgs.easy-ps.purs-0_14_5;
@@ -33,6 +34,15 @@
             inherit system;
             overlays = [ ctl-nix ];
           };
+          scripts = pkgs.runCommand
+            "scripts"
+            {
+              buildInputs = [ contract."hello:exe:hello" ];
+            }
+            ''
+              mkdir -p $out/Script
+              hello > $out/Script/hello.json
+            '';
           ps = purs-nix.purs
             {
               purescript = purs;
@@ -44,6 +54,8 @@
                 [
                   cardano-transaction-lib
                 ];
+              # FFI dependencies
+              foreign."Donation.Script".node_modules = scripts;
             };
           ps-command = ps.command { };
           # TODO move this patch to ctl-nix
