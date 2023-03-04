@@ -50,7 +50,7 @@ import Effect.Aff
 import Mote (test)
 import Test.Spec.Runner (defaultConfig)
 
-import Main (contract)
+import Donation.Contract (contract)
 
 config :: PlutipConfig
 config =

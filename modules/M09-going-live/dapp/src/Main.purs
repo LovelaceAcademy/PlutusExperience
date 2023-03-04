@@ -1,15 +1,14 @@
-module Main (contract, main) where
+module Main (main) where
 
 import Contract.Prelude
-
-import Contract.Address (ownPaymentPubKeyHash)
-import Contract.Log (logInfo')
-import Contract.Monad (Contract, launchAff_, runContract)
+  ( ($)
+  , Effect
+  , Unit
+  , void
+  )
+import Contract.Monad (launchAff_, runContract)
 import Contract.Config (testnetEternlConfig)
-import Donation.Script
-
-contract :: Contract () Unit
-contract = logInfo' <<< show =<< ownPaymentPubKeyHash
+import Donation.Contract (contract)
 
 main :: Effect Unit
 main = launchAff_
