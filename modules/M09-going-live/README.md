@@ -281,3 +281,8 @@ mkdir modules/M09-going-live/{contract,dapp}
   nix flake init -t github:LovelaceAcademy/nix-templates#ctl-full
 )
 ```
+
+## Reference links
+
+- [CTL test example](https://github.com/Plutonomicon/cardano-transaction-lib/blob/e3003b91d97ac02504f8b5e23657189b663d797b/examples/ContractTestUtils.purs)
+- [singularitynet](https://github.com/mlabs-haskell/singularitynet)
