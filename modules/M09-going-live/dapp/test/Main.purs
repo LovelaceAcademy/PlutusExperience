@@ -4,10 +4,13 @@ import Contract.Prelude
   ( ($)
   , (=<<)
   , (<$>)
+  , (+)
   , LogLevel (Trace)
   , Unit
   , flip
   , bind
+  , pure
+  , void
   )
 
 import Contract.Address
@@ -30,7 +33,7 @@ import Contract.Test.Utils
   , exitCode
   , interruptOnSignal
   , withAssertions
-  , assertLossAtAddress'
+  , assertLossAtAddress
   , label
   )
 import Contract.Monad (liftedM)
@@ -50,7 +53,7 @@ import Effect.Aff
 import Mote (test)
 import Test.Spec.Runner (defaultConfig)
 
-import Donation.Contract (contract)
+import Donation.Contract (ContractResult, contract)
 
 config :: PlutipConfig
 config =
@@ -95,20 +98,20 @@ suite :: TestPlanM PlutipTest Unit
 suite = do
   test "locks 10ADA to the contract" do
     let
-      assertions :: AssertionParams -> Array (ContractWrapAssertion () Unit)
+      assertions :: AssertionParams -> Array (ContractWrapAssertion () ContractResult)
       assertions { donator } =
-        [ assertLossAtAddress' donator $ DBI.fromInt 10_000_000
+        [ assertLossAtAddress donator
+            \{ txFinalFee } -> pure $ DBI.fromInt 10_000_000 + txFinalFee
         ]
       distribution :: InitialUTxOs
       distribution =
-        [ DBI.fromInt 5_000_000
-        , DBI.fromInt 2_000_000_000
+        [ DBI.fromInt 20_000_000
+        , DBI.fromInt 5_000_000
         ]
-    withWallets distribution \kw -> do
-       addr <- withKeyWallet kw $
-         liftedM "Failed to get donator address" $ head <$> getWalletAddresses
+    withWallets distribution \kw -> withKeyWallet kw do
+       addr <- liftedM "Failed to get donator address" $ head <$> getWalletAddresses
        let donator = label addr "donator"
-       withAssertions (assertions { donator }) contract
+       void $ withAssertions (assertions { donator }) contract
 
 main :: Effect Unit
 main = interruptOnSignal SIGINT =<< launchAff do
