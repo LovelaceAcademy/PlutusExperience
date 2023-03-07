@@ -8,6 +8,9 @@ import Contract.Prelude
   ( ($)
   , (<>)
   , Unit
+  , Maybe(Just, Nothing)
+  , isNothing
+  , const
   , liftEither
   , pure
   , bind
@@ -18,6 +21,7 @@ import Contract.Address as CA
 import Contract.Monad 
   ( Contract
   , liftedE
+  , liftedM
   , liftContractM
   )
 import Contract.Transaction as CT
@@ -30,8 +34,9 @@ import Contract.Utxos as CU
 import Data.BigInt as DBI
 import Data.Array (head)
 import Data.Lens (view)
-import Data.Maybe (Maybe(Nothing))
+import Data.Time.Duration (Milliseconds(Milliseconds))
 import Donation.Script (validator)
+import Effect.Aff.Retry (retrying, constantDelay)
 
 type ContractResult =
   { txId :: CT.TransactionHash
@@ -71,8 +76,10 @@ reward donationTxId = do
   validator <- liftEither validator
   let scriptAddress = CA.scriptHashAddress (validatorHash validator) Nothing
   utxos <- CU.utxosAt scriptAddress
-  utxo <- liftContractM "could not find utxo at script address" $
-    head $ CT.lookupTxHash donationTxId utxos
+  utxo <- liftedM "could not find utxo at script address" $
+    retrying (constantDelay $ Milliseconds 5000.0)
+      (\_ utxo' -> pure $ isNothing utxo')
+      (const $ pure $ head $ CT.lookupTxHash donationTxId utxos)
   let
       txInput = view CT._input utxo
       redeemer = wrap $ CPD.toData $ Password $ DBI.fromInt 42
