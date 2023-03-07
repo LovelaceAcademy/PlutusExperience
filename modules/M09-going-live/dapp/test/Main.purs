@@ -97,14 +97,24 @@ config =
   }
 
 type Address = CTU.Labeled CA.Address
-type DonationParams = { donator :: Address, script :: Address }
-type RewardParams = { visitor :: Address }
+type Params = ( script :: Address )
+type DonationParams = { donator :: Address | Params }
+type RewardParams = { visitor :: Address | Params }
 
 getOwnWalletLabeledAddress :: String -> forall a. Contract a Address
 getOwnWalletLabeledAddress s = do
        addr <- liftedM ("Failed to get " <> s <> " address") $
          head <$> CA.getWalletAddresses
        pure $ CTU.label addr s
+
+getScriptAddress :: forall a. Contract a Address
+getScriptAddress = do
+        validator' <- liftContractE' "Failed to parse validator" $
+         CS.validatorHash <$> validator
+        nId <- CA.getNetworkId
+        valAddr <- liftContractM "Failed to get validator address" $
+          CA.validatorHashEnterpriseAddress nId validator'
+        pure $ CTU.label valAddr "script"
 
 suite :: TestPlanM PlutipTest Unit
 suite = do
@@ -123,19 +133,15 @@ suite = do
         ]
     withWallets distribution \kw -> withKeyWallet kw do
        donator <- getOwnWalletLabeledAddress "donator"
-       validator' <- liftContractE' "Failed to parse validator" $
-         CS.validatorHash <$> validator
-       nId <- CA.getNetworkId
-       valAddr <- liftContractM "Failed to get validator address" $
-         CA.validatorHashEnterpriseAddress nId validator'
-       let script = CTU.label valAddr "script"
+       script <- getScriptAddress
        void $ CTU.withAssertions (assertions { donator, script }) donation
   test "given the 42 answer, visitor gets all locked ADA from the contract" do
     let
       assertions :: RewardParams -> Array (CTU.ContractWrapAssertion () ContractResult)
-      assertions { visitor } =
+      assertions { visitor, script } = let amount = DBI.fromInt 10_000_000 in
         [ CTU.assertGainAtAddress visitor
-            \{ txFinalFee } -> pure $ DBI.fromInt 10_000_000 - txFinalFee
+            \{ txFinalFee } -> pure $ amount - txFinalFee
+        , CTU.assertLossAtAddress' script amount
         ]
       distribution =
           [ DBI.fromInt 20_000_000
@@ -149,7 +155,8 @@ suite = do
        { txId: donationTxId } <- withKeyWallet w1 donation
        withKeyWallet w2 do
          visitor <- getOwnWalletLabeledAddress "visitor"
-         void $ CTU.withAssertions (assertions { visitor }) (reward donationTxId)
+         script <- getScriptAddress
+         void $ CTU.withAssertions (assertions { visitor, script }) (reward donationTxId)
 
 main :: Effect Unit
 main = CTU.interruptOnSignal SIGINT =<< launchAff do
