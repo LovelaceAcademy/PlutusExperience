@@ -8,10 +8,10 @@ import Contract.Prelude
   )
 import Contract.Monad (launchAff_, runContract)
 import Contract.Config (testnetEternlConfig)
-import Donation.Contract (contract)
+import Donation.Contract (donation)
 
 main :: Effect Unit
 main = launchAff_
   $ void
   $ runContract testnetEternlConfig
-  $ contract
+  $ donation
