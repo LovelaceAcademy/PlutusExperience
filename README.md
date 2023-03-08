@@ -83,6 +83,7 @@ To run anyting on this repository, you'll need to have:
 
 ## [Module 10 - A Vesting Contract](modules/M10-a-vesting-contract)
 
+- Script Context
 - Handling Time (Slots)
 - Building the UI
 

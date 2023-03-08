@@ -24,6 +24,8 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 ## What you should know
 
+# Script Context
+
 # Handling Time
 
 # Breakthrough: Building the UI for the Vesting Contract
