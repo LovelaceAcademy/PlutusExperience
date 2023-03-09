@@ -117,9 +117,9 @@ value1 = MkValue 5
 
 There are more differences, but in general the compiler will let you know.
 
-[PureScript to Haskell](https://github.com/JordanMartinez/purescript-to-haskell)
-[Differences from Haskell](https://github.com/purescript/documentation/blob/master/language/Differences-from-Haskell.md) describes in one page the differences between the languages.
-[GHC](https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/table.html) describes in one page Haskell extensions.
+- [PureScript to Haskell](https://github.com/JordanMartinez/purescript-to-haskell);
+- [Differences from Haskell](https://github.com/purescript/documentation/blob/master/language/Differences-from-Haskell.md) describes in one page the differences between the languages;
+- [GHC](https://downloads.haskell.org/ghc/latest/docs/users_guide/exts/table.html) describes in one page Haskell extensions.
 
 # Haskell Nix
 
