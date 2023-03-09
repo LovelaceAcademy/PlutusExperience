@@ -26,6 +26,53 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Script Context
 
+## Script Context and Purpose
+
+```haskell
+data ScriptContext = ScriptContext
+    { scriptContextTxInfo :: TxInfo
+      scriptContextPurpose :: ScriptPurpose
+    }
+
+data ScriptPurpose =
+      Minting CurrencySymbol
+    | Spending TxOutRef
+    | Rewarding StakingCredential
+    | Certifying DCert
+
+data TxOutRef = TxOutRef
+    { txOutRefId :: TxId
+    , txOutRefIdx :: Integer
+    }
+
+data TxId = TxId { getTxId :: BuiltinByteString }
+```
+
+## Transaction Info
+
+```haskell
+data TxInfo = TxInfo
+    { txInfoInputs :: [TxInInfo]
+    , txInfoReferenceInputs :: [TxInInfo]
+    , txInfoOutputs :: [TxOut]
+    , txInfoFee :: Value
+    , txInfoMint :: Value
+    , txInfoDCert :: [DCert]
+    , txInfoWdrl :: Map StakingCredential Integer   
+    , txInfoValidRange :: POSIXTimeRange
+    , txInfoSignatories :: [PubKeyHash]
+    , txInfoRedeemers :: Map ScriptPurpose Redeemer
+    , txInfoData :: Map DatumHash Datum
+    , txInfoId :: TxId
+    }
+```
+
 # Handling Time
+
+## Interval
+
+```haskell
+type POSIXTimeRange = Interval POSIXTime
+```
 
 # Breakthrough: Building the UI for the Vesting Contract
