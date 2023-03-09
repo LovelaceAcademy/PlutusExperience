@@ -69,10 +69,38 @@ data TxInfo = TxInfo
 
 # Handling Time
 
-## Interval
+## Assumptions
+
+- `1 slot = 1 second up to 36 hours` (by protocol design)
+- Allowed time range can be provided on transaction creation in POSIX format
+
+## POSIXTimeRange
 
 ```haskell
 type POSIXTimeRange = Interval POSIXTime
+
+newtype POSIXTime = POSIXTime { getPOSIXTime :: Integer }
+
+data Interval a = Interval
+    { ivFrom :: LowerBound a
+    , ivTo :: UpperBound a
+    }
+
+data LowerBound a = LowerBound (Extended a) Closure	
+data UpperBound a = UpperBound (Extended a) Closure	
+
+type Closure = Bool
+
+data Extended a = NegInf | Finite a	| PosInf
 ```
+
+## Deadline
+
+![deadline](images/001.png)
+
+## Vesting Contract
+
+- [Vesting Contract](https://plutus-pioneer-program.readthedocs.io/en/latest/pioneer/week3.html#example-vesting)
+- [PPP 030304](https://www.youtube.com/watch?v=ae7U_yKIQ0Y)
 
 # Breakthrough: Building the UI for the Vesting Contract
