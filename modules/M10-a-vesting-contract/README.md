@@ -104,3 +104,25 @@ data Extended a = NegInf | Finite a	| PosInf
 - [PPP 030304](https://www.youtube.com/watch?v=ae7U_yKIQ0Y)
 
 # Breakthrough: Building the UI for the Vesting Contract
+
+## Description
+
+> As a donator I want to lock an ADA value in a contract, to be rewarded to a given beneficiary according a given deadline
+
+> As the beneficiary I want to reclaim the locked ADA value only after the deadline
+
+## Bootstrap
+
+```
+mkdir modules/M10-a-vesting-contract/{contract,dapp}
+
+(
+  cd modules/M10-a-vesting-contract/contract
+  nix flake init -t github:LovelaceAcademy/nix-templates#hor-plutus
+)
+
+(
+  cd modules/M10-a-vesting-contract/dapp
+  nix flake init -t github:LovelaceAcademy/nix-templates#pix-ctl-full
+)
+```
