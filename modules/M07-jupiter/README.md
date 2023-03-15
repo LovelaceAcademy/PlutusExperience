@@ -766,7 +766,7 @@ render st =
 ## Bootstrap
 
 ```bash
-nix flake init -t github:LovelaceAcademy/nix-templates#purs-nix
+nix flake init -t github:LovelaceAcademy/nix-templates#pix
 ```
 
 ## References and Links

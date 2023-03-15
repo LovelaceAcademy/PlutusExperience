@@ -184,7 +184,7 @@ foreign import script :: String
 
 ```bash
 cd modules/M08-bring-it-on
-nix flake init -t github:LovelaceAcademy/nix-templates#ctl-full
+nix flake init -t github:LovelaceAcademy/nix-templates#pix-ctl-full
 git init
 git add --all
 nix develop

@@ -133,7 +133,7 @@ There are more differences, but in general the compiler will let you know.
 mkdir haskell-project
 cd haskell-project
 git init
-nix flake init --template github:LovelaceAcademy/nix-templates#haskell-nix
+nix flake init --template github:LovelaceAcademy/nix-templates#hix
 git status
 ```
 
@@ -281,7 +281,7 @@ Hello, World!
 mkdir plutus-project
 cd plutus-project
 git init
-nix flake init --template github:LovelaceAcademy/nix-templates#plutus
+nix flake init --template github:LovelaceAcademy/nix-templates#hix-plutus
 git status
 ```
 
