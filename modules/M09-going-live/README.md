@@ -273,12 +273,12 @@ mkdir modules/M09-going-live/{contract,dapp}
 
 (
   cd modules/M09-going-live/contract
-  nix flake init -t github:LovelaceAcademy/nix-templates#plutus
+  nix flake init -t github:LovelaceAcademy/nix-templates#hix-plutus
 )
 
 (
   cd modules/M09-going-live/dapp
-  nix flake init -t github:LovelaceAcademy/nix-templates#ctl-full
+  nix flake init -t github:LovelaceAcademy/nix-templates#pix-ctl-full
 )
 ```
 
