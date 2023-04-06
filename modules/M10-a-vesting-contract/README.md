@@ -108,7 +108,7 @@ data Extended a = NegInf | Finite a	| PosInf
 - [Vesting Contract](https://plutus-pioneer-program.readthedocs.io/en/latest/pioneer/week3.html#example-vesting)
 - [PPP 030304](https://www.youtube.com/watch?v=ae7U_yKIQ0Y)
 
-# Breakthrough: Building the UI for the Vesting Contract
+# Breakthrough: Building the Vesting Contract
 
 ## Description
 
