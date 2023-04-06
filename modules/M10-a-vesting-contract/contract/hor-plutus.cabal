@@ -1,0 +1,21 @@
+cabal-version: 3.0
+
+name: hor-plutus
+version: 1.0.0.2
+
+common lang
+  ghc-options: -Wall 
+
+executable hor-plutus
+  import: lang
+  hs-source-dirs: src
+  main-is: Main.hs
+  build-depends:
+      base
+    , bytestring
+    , cardano-api
+    , plutus-ledger-api
+    , plutus-tx
+    , plutus-tx-plugin
+    , plutus-script-utils
+    , serialise
