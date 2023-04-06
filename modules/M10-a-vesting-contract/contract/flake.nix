@@ -17,21 +17,21 @@
             with pkgs.haskell.lib;
             inputs.horizon-wave-ocean.legacyPackages.${system}.extend (hfinal: hprev:
               {
-                hor-plutus = disableLibraryProfiling (hprev.callCabal2nix "hor-plutus" ./. { });
+                vesting-contract = disableLibraryProfiling (hprev.callCabal2nix "vesting-contract" ./. { });
               });
           script = pkgs.runCommand "script"
             {
-              buildInputs = [ hsPkgs.hor-plutus ];
+              buildInputs = [ hsPkgs.vesting-contract ];
             }
-            ''hor-plutus > $out'';
+            ''vesting-contract > $out'';
           script-check = pkgs.runCommand "script-check" { }
             ''cat ${script}; touch $out'';
         in
         {
-          packages.default = hsPkgs.hor-plutus;
+          packages.default = hsPkgs.vesting-contract;
           packages.script = script;
 
-          devShells.default = hsPkgs.hor-plutus.env.overrideAttrs (attrs: {
+          devShells.default = hsPkgs.vesting-contract.env.overrideAttrs (attrs: {
             buildInputs = with pkgs; attrs.buildInputs ++ [
               cabal-install
             ];

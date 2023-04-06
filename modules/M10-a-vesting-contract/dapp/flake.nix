@@ -4,7 +4,7 @@
     nixpkgs.follows = "ctl-nix/nixpkgs";
     purs-nix.follows = "ctl-nix/purs-nix";
     utils.url = "github:ursi/flake-utils";
-    hor-plutus.url = "github:LovelaceAcademy/nix-templates?dir=hor-plutus";
+    vesting-contract.url = "path:../contract";
   };
 
   outputs = { self, utils, ... }@inputs:
@@ -25,7 +25,7 @@
     in
     utils.apply-systems
       { inherit inputs systems overlays; }
-      ({ system, pkgs, ctl-nix, hor-plutus, ... }:
+      ({ system, pkgs, ctl-nix, vesting-contract, ... }:
         let
           # Use purs from CTL instead from nixpkgs
           purs = pkgs.easy-ps.purs-0_14_5;
@@ -36,11 +36,11 @@
           scripts = pkgs.runCommand
             "scripts"
             {
-              buildInputs = [ hor-plutus ];
+              buildInputs = [ vesting-contract ];
             }
             ''
               mkdir -p $out/Scripts
-              hor-plutus > $out/Scripts/scriptV2.json
+              vesting-contract > $out/Scripts/scriptV2.json
             '';
           ps = purs-nix.purs
             {

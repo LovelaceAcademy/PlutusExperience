@@ -1,15 +1,17 @@
 cabal-version: 3.0
 
-name: hor-plutus
+name: vesting-contract
 version: 1.0.0.2
 
 common lang
   ghc-options: -Wall 
 
-executable hor-plutus
+executable vesting-contract
   import: lang
   hs-source-dirs: src
   main-is: Main.hs
+  other-modules:
+    Vesting
   build-depends:
       base
     , bytestring

@@ -2499,6 +2499,21 @@
     },
     "flake-utils_25": {
       "locked": {
+        "lastModified": 1618217525,
+        "narHash": "sha256-WGrhVczjXTiswQaoxQ+0PTfbLNeOQM6M36zvLn78AYg=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c6169a2772643c4a93a0b5ac1c61e296cba68544",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_26": {
+      "locked": {
         "lastModified": 1659877975,
         "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
         "owner": "numtide",
@@ -2511,28 +2526,13 @@
         "type": "indirect"
       }
     },
-    "flake-utils_26": {
+    "flake-utils_27": {
       "locked": {
         "lastModified": 1644229661,
         "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
         "owner": "numtide",
         "repo": "flake-utils",
         "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "flake-utils_27": {
-      "locked": {
-        "lastModified": 1618217525,
-        "narHash": "sha256-WGrhVczjXTiswQaoxQ+0PTfbLNeOQM6M36zvLn78AYg=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "c6169a2772643c4a93a0b5ac1c61e296cba68544",
         "type": "github"
       },
       "original": {
@@ -3683,32 +3683,6 @@
         "type": "github"
       }
     },
-    "hor-plutus": {
-      "inputs": {
-        "horizon-wave-ocean": "horizon-wave-ocean",
-        "nixpkgs": [
-          "hor-plutus",
-          "horizon-wave-ocean",
-          "nixpkgs"
-        ],
-        "utils": "utils_17"
-      },
-      "locked": {
-        "dir": "hor-plutus",
-        "lastModified": 1680097097,
-        "narHash": "sha256-AqKUqNm4YYfu4Z2iIbI9rczHAiK/647ulUuUrwXAgXU=",
-        "owner": "LovelaceAcademy",
-        "repo": "nix-templates",
-        "rev": "13b57cdd2df2495274a3d5d4301716cb176ea0d1",
-        "type": "github"
-      },
-      "original": {
-        "dir": "hor-plutus",
-        "owner": "LovelaceAcademy",
-        "repo": "nix-templates",
-        "type": "github"
-      }
-    },
     "horizon-core": {
       "flake": false,
       "locked": {
@@ -3727,7 +3701,7 @@
     },
     "horizon-wave-ocean": {
       "inputs": {
-        "flake-utils": "flake-utils_25",
+        "flake-utils": "flake-utils_26",
         "get-flake": "get-flake_2",
         "horizon-core": "horizon-core",
         "iohk-nix": "iohk-nix_5",
@@ -4502,7 +4476,7 @@
     },
     "lint-utils": {
       "inputs": {
-        "flake-utils": "flake-utils_26",
+        "flake-utils": "flake-utils_27",
         "nixpkgs": "nixpkgs_32"
       },
       "locked": {
@@ -7746,7 +7720,6 @@
     "root": {
       "inputs": {
         "ctl-nix": "ctl-nix",
-        "hor-plutus": "hor-plutus",
         "nixpkgs": [
           "ctl-nix",
           "nixpkgs"
@@ -7755,7 +7728,8 @@
           "ctl-nix",
           "purs-nix"
         ],
-        "utils": "utils_18"
+        "utils": "utils_17",
+        "vesting-contract": "vesting-contract"
       }
     },
     "rust-analyzer-src": {
@@ -8387,7 +8361,7 @@
     },
     "utils_17": {
       "inputs": {
-        "flake-utils": "flake-utils_27"
+        "flake-utils": "flake-utils_25"
       },
       "locked": {
         "lastModified": 1658606827,
@@ -8539,6 +8513,27 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "type": "github"
+      }
+    },
+    "vesting-contract": {
+      "inputs": {
+        "horizon-wave-ocean": "horizon-wave-ocean",
+        "nixpkgs": [
+          "vesting-contract",
+          "horizon-wave-ocean",
+          "nixpkgs"
+        ],
+        "utils": "utils_18"
+      },
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-X9exnd7K40sscyUQZSbI7nIo99xyIiqqFH+oSXwresU=",
+        "path": "../contract",
+        "type": "path"
+      },
+      "original": {
+        "path": "../contract",
+        "type": "path"
       }
     },
     "yants": {
