@@ -1,30 +1,18 @@
-module Main (contract, main) where
+module Main (main) where
 
 import Contract.Prelude
   ( ($)
   , Effect
   , Unit
   , void
-  , bind
-  , liftEither
-  , discard
-  , show
   )
-import Contract.Address (ownPaymentPubKeyHash)
-import Contract.Log (logInfo')
-import Contract.Monad (Contract, launchAff_, runContract)
+import Contract.Monad (launchAff_, runContract)
 import Contract.Config (testnetEternlConfig)
-import Scripts (validator)
-
-contract :: Contract Unit
-contract = do
-  validator' <- liftEither validator
-  logInfo' $ show validator'
-  pk <- ownPaymentPubKeyHash
-  logInfo' $ show pk
+import Data.BigInt as DBI
+import Donation.Contract (donate)
 
 main :: Effect Unit
 main = launchAff_
   $ void
   $ runContract testnetEternlConfig
-  $ contract
+  $ donate $ DBI.fromInt 10_000_000
