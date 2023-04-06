@@ -2,7 +2,6 @@
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/nixpkgs-unstable;
     purs-eval.url = github:klarkc/purs-eval;
-    patat.url = github:klarkc/patat;
     utils.url = github:ursi/flake-utils;
   };
 
@@ -13,7 +12,7 @@
         # limited by purs-nix
         systems = [ "x86_64-linux" ];
       }
-      ({ pkgs, purs-eval, patat, ... }: {
+      ({ pkgs, purs-eval, ... }: {
         packages.default = pkgs.writeShellApplication {
           name = "slide";
           text = ''
@@ -21,10 +20,10 @@
           '';
           runtimeInputs = with pkgs; [
             purs-eval
-            patat
             nodejs
-            haskellPackages.ghc
             w3m
+            haskellPackages.patat
+            haskellPackages.ghc
             nodePackages.prettier
           ];
         };
