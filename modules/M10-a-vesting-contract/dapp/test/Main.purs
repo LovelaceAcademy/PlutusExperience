@@ -19,6 +19,7 @@ import Contract.Prelude
 import Control.Monad.Trans.Class (lift)
 import Contract.Address as CA
 import Contract.Config (emptyHooks)
+import Contract.Numeric.Natural as CNN
 import Contract.Monad as CM
 import Contract.Test
   ( ContractTest
@@ -37,6 +38,7 @@ import Contract.Test.Plutip
 import Contract.Test.Utils as CTU
 import Contract.Test.Assert as CTA
 import Contract.Scripts as CS
+import Contract.Chain as CC
 import Data.Array as DA
 import Data.BigInt as DBI
 import Data.Maybe (Maybe (Just, Nothing))
@@ -53,12 +55,12 @@ import Effect.Aff
   )
 import Mote (test)
 import Test.Spec.Runner (defaultConfig)
-import Donation.Contract
+import Donation
   ( ContractResult
+  , validator
   , donate
   , reclaim
   )
-import Donation.Script (validator)
 
 config :: PlutipConfig
 config =
@@ -105,7 +107,7 @@ getScriptAddress = do
 
 suite :: TestPlanM ContractTest Unit
 suite = do
-  test "donator locks ADA in the contract" do
+  test "donator locks ADA, deadline and beneficiary in the contract" do
     let
       distribution :: InitialUTxOs
       distribution =
@@ -123,11 +125,13 @@ suite = do
     withWallets distribution \kw -> withKeyWallet kw do
        donator <- getOwnWalletLabeledAddress "donator"
        script <- getScriptAddress
+       deadline <- CC.currentTime
        let value = DBI.fromInt 10_000_000
+           beneficiary = CTA.unlabel donator
        void $ CTA.runChecks
         (checks { donator, script })
-        (lift $ donate value)
-  test "beneficiary reclaim ADA in the contract" do
+        (lift $ donate { value, beneficiary, deadline })
+  test "beneficiary reclaim ADA in the contract, after the deadline" do
     let
       distribution =
            [ DBI.fromInt 20_000_000
@@ -144,13 +148,21 @@ suite = do
              pure $ amount - txFinalFee
         ]
     withWallets distribution \(w1 /\ w2) -> do
+       beneficiary <- withKeyWallet w2 $ getOwnWalletLabeledAddress "beneficiary"
        let value = DBI.fromInt 10_000_000
-       { txId: donationTxId } <- withKeyWallet w1 $ donate value
+       { txId: donationTxId } <- withKeyWallet w1 do
+          deadline <- CC.currentTime
+          donate { value
+                 , beneficiary: CTA.unlabel beneficiary
+                 , deadline
+                 }
        withKeyWallet w2 do
-          beneficiary <- getOwnWalletLabeledAddress "beneficiary"
           void $ CTA.runChecks
             (checks { beneficiary })
-            (lift $ reclaim donationTxId)
+            (lift $ reclaim { beneficiary: CTA.unlabel beneficiary
+                            , donationTxId
+                            }
+            )
 
 main :: Effect Unit
 main = CTU.interruptOnSignal SIGINT =<< launchAff do
