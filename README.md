@@ -87,9 +87,9 @@ To run anyting on this repository, you'll need to have:
 - Handling Time (Slots)
 - Building the contract and tests
 
-## Module 11 - A Vesting Contract II
+## [Module 11 - A Vesting Contract II](modules/M11-a-vesting-contract-ii)
 
-- Building the UI
+- Building the Vesting Contract UI
 
 ## Module 12 - (Non/)Fungible Tokens
 - Parameterized contracts (Plutus and CTL)
