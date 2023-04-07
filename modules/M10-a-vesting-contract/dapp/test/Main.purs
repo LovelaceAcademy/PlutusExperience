@@ -19,7 +19,6 @@ import Contract.Prelude
 import Control.Monad.Trans.Class (lift)
 import Contract.Address as CA
 import Contract.Config (emptyHooks)
-import Contract.Numeric.Natural as CNN
 import Contract.Monad as CM
 import Contract.Test
   ( ContractTest
