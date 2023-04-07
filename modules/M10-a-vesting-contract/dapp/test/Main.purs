@@ -4,6 +4,7 @@ import Contract.Prelude
   ( ($)
   , (=<<)
   , (+)
+  , (-)
   , (<>)
   , (<$>)
   , LogLevel (Trace)
@@ -12,6 +13,7 @@ import Contract.Prelude
   , bind
   , pure
   , void
+  , discard
   )
 
 import Control.Monad.Trans.Class (lift)
@@ -40,6 +42,7 @@ import Data.BigInt as DBI
 import Data.Maybe (Maybe (Just, Nothing))
 import Data.Posix.Signal (Signal(SIGINT))
 import Data.Time.Duration (Seconds (Seconds))
+import Data.Tuple.Nested ((/\))
 import Data.UInt as DU
 import Effect (Effect)
 import Effect.Aff
@@ -50,7 +53,11 @@ import Effect.Aff
   )
 import Mote (test)
 import Test.Spec.Runner (defaultConfig)
-import Donation.Contract (ContractResult, donate)
+import Donation.Contract
+  ( ContractResult
+  , donate
+  , reclaim
+  )
 import Donation.Script (validator)
 
 config :: PlutipConfig
@@ -79,6 +86,7 @@ config =
 
 type Address = CTA.Labeled CA.Address
 type DonationParams = { donator :: Address, script :: Address }
+type RewardParams = { beneficiary :: Address }
 
 getOwnWalletLabeledAddress :: String -> CM.Contract Address
 getOwnWalletLabeledAddress s = do
@@ -119,7 +127,30 @@ suite = do
        void $ CTA.runChecks
         (checks { donator, script })
         (lift $ donate value)
-
+  test "beneficiary reclaim ADA in the contract" do
+    let
+      distribution =
+           [ DBI.fromInt 20_000_000
+           , DBI.fromInt 5_000_000
+           ]
+        /\ [ DBI.fromInt 1_000_000
+           , DBI.fromInt 5_000_000
+           ]
+      checks :: RewardParams -> Array (CTA.ContractCheck ContractResult)
+      checks { beneficiary } = let amount = DBI.fromInt 10_000_000 in
+        [ CTA.checkGainAtAddress beneficiary
+          \r -> do
+             { txFinalFee } <- CM.liftContractM "contract did not provided any value" r
+             pure $ amount - txFinalFee
+        ]
+    withWallets distribution \(w1 /\ w2) -> do
+       let value = DBI.fromInt 10_000_000
+       { txId: donationTxId } <- withKeyWallet w1 $ donate value
+       withKeyWallet w2 do
+          beneficiary <- getOwnWalletLabeledAddress "beneficiary"
+          void $ CTA.runChecks
+            (checks { beneficiary })
+            (lift $ reclaim donationTxId)
 
 main :: Effect Unit
 main = CTU.interruptOnSignal SIGINT =<< launchAff do
