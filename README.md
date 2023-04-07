@@ -81,7 +81,7 @@ To run anyting on this repository, you'll need to have:
 - Untyped vs Typed Validation Scripts
 - Testing with Plutip
 
-## [Module 10 - A Vesting Contract I](modules/M10-a-vesting-contract)
+## [Module 10 - A Vesting Contract I](modules/M10-a-vesting-contract-i)
 
 - Script Context
 - Handling Time (Slots)
