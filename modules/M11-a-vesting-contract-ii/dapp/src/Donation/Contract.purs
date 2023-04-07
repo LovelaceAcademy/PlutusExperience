@@ -19,7 +19,6 @@ import Contract.Prelude
 
 import Contract.Address as CA
 import Contract.Monad as CM
-import Contract.PlutusData as CPD
 import Contract.ScriptLookups as CSL
 import Contract.Scripts as CS
 import Contract.Transaction as CT
@@ -28,22 +27,29 @@ import Contract.Value as CV
 import Contract.Utxos as CU
 import Contract.Time as CTi
 import Contract.Chain as CC
+import Contract.PlutusData as CPD
+import Contract.Numeric.BigNum as CNBN
 import Data.Array as DA
 import Data.Lens (view)
 import Donation.Script (validator)
-import Donation.Types
-  ( DonateParams
-  , ReclaimParams
-  , ContractResult
-  , TransactionId 
-  , VestingDatum (VestingDatum)
-  )
+import Donation.Types as DT
+
+data VestingDatum = VestingDatum
+    { beneficiary :: CA.PubKeyHash
+    , deadline    :: CTi.POSIXTime
+    }
+
+instance CPD.ToData VestingDatum where
+  toData (VestingDatum { beneficiary, deadline }) = CPD.Constr CNBN.zero
+    [ CPD.toData beneficiary
+    , CPD.toData deadline
+    ]
 
 ownWalletAddress :: String -> CM.Contract CA.Address
 ownWalletAddress s = CM.liftedM ("Failed to get " <> s <> " address") $
   DA.head <$> CA.getWalletAddresses
 
-donate :: DonateParams -> CM.Contract ContractResult
+donate :: DT.Donate -> CM.Contract DT.ContractResult
 donate dp = do
   validator <- liftEither validator
   beneficiary <- CM.liftContractM "failed to get pubkey" $ CA.toPubKeyHash dp.beneficiary
@@ -68,7 +74,7 @@ donate dp = do
        , txFinalFee: CT.getTxFinalFee tx
        }
 
-reclaim :: ReclaimParams -> CM.Contract ContractResult
+reclaim :: DT.Reclaim -> CM.Contract DT.ContractResult
 reclaim p = do
   validator <- liftEither validator
   let scriptAddress = CA.scriptHashAddress
