@@ -52,6 +52,9 @@
                 with purs-nix.ps-pkgs;
                 [
                   cardano-transaction-lib
+                  halogen
+                  halogen-formless
+                  halogen-storybook
                 ];
               # FFI dependencies
               foreign."Scripts".node_modules = scripts;

@@ -4,22 +4,26 @@ import Contract.Prelude
   ( ($)
   , Effect
   , Unit
+  , Maybe(Just)
+  , Tuple(Tuple)
   , void
   , bind
   )
-import Contract.Monad (launchAff_, runContract)
+
 import Contract.Config (testnetEternlConfig)
-import Contract.Chain (currentTime)
-import Data.BigInt as DBI
-import Donation (ownWalletAddress, donate)
+import Effect.Aff (Aff)
+import Foreign.Object as FO
+import Halogen.Aff as HA
+import Halogen.HTML as HH
+import Halogen.Storybook as HS
+import Donation as D
+
+stories :: HS.Stories Aff
+stories = FO.fromFoldable
+  [ Tuple "Donate" $ HS.proxy (D.donatePage testnetEternlConfig)
+  ]
 
 main :: Effect Unit
-main = launchAff_
-  $ void
-  $ runContract testnetEternlConfig do
-     donator <- ownWalletAddress "donator"
-     deadline <- currentTime
-     donate { value : DBI.fromInt 10_000_000
-            , beneficiary: donator
-            , deadline
-            }
+main = HA.runHalogenAff do
+  body <- HA.awaitBody
+  HS.runStorybook { stories, logo: Just $ HH.text "A Vesting Contract" } body
