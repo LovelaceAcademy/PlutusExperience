@@ -15,6 +15,7 @@ import Contract.Prelude
   , discard
   , liftEither
   , wrap
+  , unwrap
   )
 
 import Contract.Address as CA
@@ -52,12 +53,12 @@ ownWalletAddress s = CM.liftedM ("Failed to get " <> s <> " address") $
 donate :: DT.Donate -> CM.Contract DT.ContractResult
 donate dp = do
   validator <- liftEither validator
-  beneficiary <- CM.liftContractM "failed to get pubkey" $ CA.toPubKeyHash dp.beneficiary
   let
+      pkh   = unwrap dp.beneficiary
       value = CV.lovelaceValueOf dp.value
       vhash = CS.validatorHash validator
       datum = wrap $ CPD.toData $ VestingDatum
-        { beneficiary
+        { beneficiary: pkh
         , deadline: dp.deadline
         }
       constraints :: CTC.TxConstraints Unit Unit
@@ -83,15 +84,12 @@ reclaim p = do
   utxos <- CU.utxosAt scriptAddress
   utxo <- CM.liftContractM "could not find utxo at script address" $
     DA.head $ CT.lookupTxHash p.donationTxId utxos
-  pk <- CM.liftContractM "could not generate PubKeyHash for beneficiary" $
-    CA.toPubKeyHash p.beneficiary
   now <- CC.currentTime
   let
       txInput = view CT._input utxo
-      ppkh = CA.PaymentPubKeyHash pk
       constraints :: CTC.TxConstraints Unit Unit
       constraints =    CTC.mustSpendScriptOutput txInput CPD.unitRedeemer
-                    <> CTC.mustBeSignedBy ppkh
+                    <> CTC.mustBeSignedBy p.beneficiary
                     <> CTC.mustValidateIn (CTi.from now)
 
       lookups :: CSL.ScriptLookups CPD.PlutusData

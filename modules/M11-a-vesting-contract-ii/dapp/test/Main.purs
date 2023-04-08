@@ -60,6 +60,15 @@ import Donation
   , donate
   , reclaim
   )
+import Donation.Types
+  ( Address
+  )
+
+type Labeled = CTA.Labeled
+type Contract = CM.Contract
+type Params = ( script :: Labeled Address )
+type DonationParams = { donator :: Labeled Address | Params  }
+type RewardParams = { beneficiary :: Labeled Address | Params }
 
 config :: PlutipConfig
 config =
@@ -85,17 +94,19 @@ config =
       { slotLength: Seconds 0.05 }
   }
 
-type Address = CTA.Labeled CA.Address
-type DonationParams = { donator :: Address, script :: Address }
-type RewardParams = { beneficiary :: Address }
+withPaymentPubKeyHash :: forall a. Labeled Address -> (CA.PaymentPubKeyHash -> Contract a) -> Contract a
+withPaymentPubKeyHash addr run = do
+  pkh <- CM.liftContractM "failed to get address pub key hash" $
+    CA.toPubKeyHash (CTA.unlabel addr)
+  run $ CA.PaymentPubKeyHash pkh
 
-getOwnWalletLabeledAddress :: String -> CM.Contract Address
+getOwnWalletLabeledAddress :: String -> Contract (Labeled Address)
 getOwnWalletLabeledAddress s = do
        addr <- CM.liftedM ("Failed to get " <> s <> " address") $
          DA.head <$> CA.getWalletAddresses
        pure $ CTA.label addr s
 
-getScriptAddress :: CM.Contract Address
+getScriptAddress :: Contract (Labeled Address)
 getScriptAddress = do
         validator' <- CM.liftContractE' "Failed to parse validator" $
          CS.validatorHash <$> validator
@@ -126,10 +137,11 @@ suite = do
        script <- getScriptAddress
        deadline <- CC.currentTime
        let value = DBI.fromInt 10_000_000
-           beneficiary = CTA.unlabel donator
        void $ CTA.runChecks
-        (checks { donator, script })
-        (lift $ donate { value, beneficiary, deadline })
+        ( checks { donator, script } )
+        ( lift $ withPaymentPubKeyHash donator
+            \beneficiary -> donate { beneficiary, deadline, value }
+        )
   test "beneficiary reclaim ADA in the contract, after the deadline" do
     let
       distribution =
@@ -140,27 +152,25 @@ suite = do
            , DBI.fromInt 5_000_000
            ]
       checks :: RewardParams -> Array (CTA.ContractCheck ContractResult)
-      checks { beneficiary } = let amount = DBI.fromInt 10_000_000 in
+      checks { beneficiary, script } = let amount = DBI.fromInt 10_000_000 in
         [ CTA.checkGainAtAddress beneficiary
           \r -> do
              { txFinalFee } <- CM.liftContractM "contract did not provided any value" r
              pure $ amount - txFinalFee
+        , CTA.checkLossAtAddress' script amount
         ]
     withWallets distribution \(w1 /\ w2) -> do
        beneficiary <- withKeyWallet w2 $ getOwnWalletLabeledAddress "beneficiary"
        let value = DBI.fromInt 10_000_000
-       { txId: donationTxId } <- withKeyWallet w1 do
+       { txId: donationTxId } <- withKeyWallet w1 $ withPaymentPubKeyHash beneficiary \ppkh -> do
           deadline <- CC.currentTime
-          donate { value
-                 , beneficiary: CTA.unlabel beneficiary
-                 , deadline
-                 }
+          donate { value, beneficiary: ppkh, deadline }
        withKeyWallet w2 do
+          script <- getScriptAddress
           void $ CTA.runChecks
-            (checks { beneficiary })
-            (lift $ reclaim { beneficiary: CTA.unlabel beneficiary
-                            , donationTxId
-                            }
+            ( checks { beneficiary, script } )
+            ( lift $ withPaymentPubKeyHash beneficiary
+                \ppkh -> reclaim { beneficiary: ppkh, donationTxId }
             )
 
 main :: Effect Unit

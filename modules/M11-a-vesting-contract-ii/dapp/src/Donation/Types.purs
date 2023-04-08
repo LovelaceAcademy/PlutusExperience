@@ -7,6 +7,7 @@ module Donation.Types
   , Address
   , Deadline
   , Value
+  , Beneficiary
   )
   where
 
@@ -19,7 +20,8 @@ type TransactionId = CT.TransactionHash
 type Value = DBI.BigInt
 type Deadline = CTi.POSIXTime
 type Address = CA.Address
-type Common = ( beneficiary :: Address )
+type Beneficiary = CA.PaymentPubKeyHash
+type Common = ( beneficiary :: Beneficiary )
 type Donate = 
   { value :: Value
   , deadline :: Deadline

@@ -14,6 +14,7 @@ import Contract.Prelude
   , wrap
   , const
   )
+import Contract.Address as CA
 import Contract.Monad as CM
 import Contract.Credential as CC
 import Effect.Aff (Aff)
@@ -30,7 +31,7 @@ import Type.Proxy (Proxy (Proxy))
 newtype DonationForm :: (Row Type -> Type) -> (Type -> Type -> Type -> Type) -> Type
 newtype DonationForm r f = DonationForm
   ( r
-      ( beneficiary :: f V.FieldError String DT.Address
+      ( beneficiary :: f V.FieldError String DT.Beneficiary
       , value :: f V.FieldError String DT.Value
       , deadline :: f V.FieldError String DT.Deadline
       )
@@ -64,9 +65,8 @@ donateForm = F.component formInput $ F.defaultSpec { render = render }
         formInput _ =
           { validators: DonationForm
               { beneficiary:
-                      (\addressCredential -> wrap { addressCredential, addressStakingCredential: Nothing })
-                  <$> CC.PubKeyCredential
-                  <$> wrap 
+                      CA.PaymentPubKeyHash
+                  <$> CA.PubKeyHash 
                   <$> V.ed25519
               , value: V.strIsBigInt
               , deadline: wrap <$> V.strIsBigInt
