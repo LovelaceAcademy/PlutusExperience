@@ -21,6 +21,7 @@ import Donation as D
 stories :: HS.Stories Aff
 stories = FO.fromFoldable
   [ Tuple "Donate" $ HS.proxy (D.donatePage testnetEternlConfig)
+  , Tuple "Reclaim" $ HS.proxy (D.reclaimPage testnetEternlConfig)
   ]
 
 main :: Effect Unit

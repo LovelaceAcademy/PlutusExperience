@@ -3,6 +3,7 @@ module Donation
   , module Donation.Contract
   , module Donation.Script
   , module Donation.Page.Donation
+  , module Donation.Page.Reclaim
   )
   where
 
@@ -19,3 +20,5 @@ import Donation.Script
   ( validator )
 import Donation.Page.Donation
   ( donatePage )
+import Donation.Page.Reclaim
+  ( reclaimPage )
