@@ -8,6 +8,7 @@ import Contract.Prelude
   , ($)
   , (<$>)
   , (<<<)
+  , (<>)
   , Unit
   , Maybe (Nothing, Just)
   , Either (Left)
@@ -21,12 +22,14 @@ import Contract.Prelude
   , bind
   , fromMaybe
   , show
+  , foldMap
   )
 import Control.Monad.Cont as CMC
 import Contract.Address as CA
 import Contract.Monad as CM
 import Contract.Credential as CC
 import Contract.Log as CL
+import Contract.Prim.ByteArray as CPBA
 import Ctl.Internal.Serialization.Hash as CISH
 import Data.String.Read (read)
 import Data.BigInt as DBI
@@ -61,7 +64,6 @@ data DonationFormMessage =
 type DonationFormInput = 
   { beneficiary :: Maybe DT.Beneficiary
   , deadline :: Maybe DT.Deadline
-  , value :: Maybe DT.Value
   }
 data DonationFormAction =
     HandlePick
@@ -152,7 +154,7 @@ donatePage cfg = H.mkComponent
   { initialState: const
       { beneficiary: Nothing
       , deadline: Nothing
-      , value: Nothing
+      , txId: Nothing
       }
   , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
   , render: render
@@ -167,7 +169,18 @@ donatePage cfg = H.mkComponent
           Now -> do
              deadline <- CMC.lift $ runContract DC.nowDeadline
              H.modify_ \s -> s { deadline = Just deadline }
-          Donate d -> void $ CMC.lift $ runContract $ DC.donate d
-        render s = HH.div_
-          [ HH.slot F._formless unit donateForm (Just s) HandleDonation
-          ]
+          Donate d -> do
+             { txId } <-  CMC.lift $ runContract $ DC.donate d
+             H.modify_ \s -> s { txId = Just txId }
+        render { beneficiary, deadline, txId } = HH.div_ $
+             foldMap
+                (\txId' ->
+                  [ HH.div [ UIE.class_ "max-w-sm mx-auto break-all" ]
+                      [ UIE.alert [] [ HH.text $ "Transaction " <> txId' <> " submitted." ] ]
+                  ]
+                )
+                (CPBA.byteArrayToHex <<< unwrap <$> txId)
+          <> [ HH.slot F._formless unit donateForm
+                 (Just { beneficiary, deadline })
+                 HandleDonation
+             ] 

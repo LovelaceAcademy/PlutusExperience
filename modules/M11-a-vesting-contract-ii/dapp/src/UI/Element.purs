@@ -3,6 +3,7 @@ module UI.Element
   , input
   , resultToHelp
   , submit
+  , alert
   )
   where
 
@@ -23,7 +24,6 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HHP
 import Validation as V
 import Formless as F
-
 
 type FieldConfig =
   { label :: String
@@ -78,7 +78,6 @@ resultToHelp str = case _ of
   F.Validating -> Right "validating..."
   other -> maybe (Right str) Left $ V.showError other
 
-
 submit :: forall w i. HH.Leaf DHI.HTMLinput w i
 submit props = formControl []
   [ HH.input
@@ -86,3 +85,6 @@ submit props = formControl []
       ,  HHP.type_ DHIIT.InputSubmit
       ] <> props)
   ]
+
+alert :: forall w i. HH.Node DHI.HTMLdiv w i
+alert props = HH.div $ [ class_ "alert alert-success shadow-lg" ] <> props

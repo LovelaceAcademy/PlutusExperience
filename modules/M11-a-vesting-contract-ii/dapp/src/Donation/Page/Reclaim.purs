@@ -5,6 +5,8 @@ module Donation.Page.Reclaim
 import Contract.Prelude
   ( ($)
   , (<$>)
+  , (<>)
+  , (<<<)
   , class Newtype
   , bind
   , void
@@ -12,10 +14,12 @@ import Contract.Prelude
   , const
   , pure
   , show
+  , foldMap
   )
 
 import Control.Monad.Cont as CMC
 import Contract.Monad as CM
+import Contract.Prim.ByteArray as CPBA
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Newtype (wrap, unwrap)
 import Data.String.Read (read)
@@ -120,6 +124,7 @@ reclaimPage :: forall q i o. CM.ContractParams -> H.Component q i o Aff
 reclaimPage cfg = H.mkComponent
   { initialState: const $ { beneficiary: Nothing
                           , donationTxId: Nothing
+                          , txId: Nothing
                           }
   , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
   , render: render
@@ -131,6 +136,18 @@ reclaimPage cfg = H.mkComponent
           PickBeneficiary -> do
              beneficiary <- CMC.lift $ runContract DC.ownBeneficiary 
              H.modify_ \s -> s { beneficiary = Just beneficiary }
-          Reclaim d -> void $ CMC.lift $ runContract $ DC.reclaim d
-        render s = HH.div_
-          [ HH.slot F._formless unit reclaimForm (Just s) HandleReclaim ]
+          Reclaim d -> do
+             { txId } <- CMC.lift $ runContract $ DC.reclaim d
+             H.modify_ \s -> s { txId = Just txId }
+        render { beneficiary, donationTxId, txId } = HH.div_ $
+             foldMap
+                (\txId' ->
+                  [ HH.div [ UIE.class_ "max-w-sm mx-auto break-all" ]
+                      [ UIE.alert [] [ HH.text $ "Transaction " <> txId' <> " submitted." ] ]
+                  ]
+                )
+                (CPBA.byteArrayToHex <<< unwrap <$> txId)
+          <> [ HH.slot F._formless unit reclaimForm
+                 (Just { beneficiary, donationTxId })
+                 HandleReclaim 
+             ]
