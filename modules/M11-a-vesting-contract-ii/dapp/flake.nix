@@ -55,6 +55,7 @@
                   halogen
                   halogen-formless
                   halogen-storybook
+                  read
                 ];
               # FFI dependencies
               foreign."Scripts".node_modules = scripts;

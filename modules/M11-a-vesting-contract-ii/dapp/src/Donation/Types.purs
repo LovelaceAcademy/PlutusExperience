@@ -1,5 +1,6 @@
 module Donation.Types
-  ( ContractResult
+  ( module Donation.Types.Beneficiary
+  , ContractResult
   , TransactionId
   , Common
   , Donate
@@ -7,7 +8,6 @@ module Donation.Types
   , Address
   , Deadline
   , Value
-  , Beneficiary
   )
   where
 
@@ -15,12 +15,12 @@ import Contract.Address as CA
 import Contract.Transaction as CT
 import Contract.Time as CTi
 import Data.BigInt as DBI
+import Donation.Types.Beneficiary
 
 type TransactionId = CT.TransactionHash
 type Value = DBI.BigInt
 type Deadline = CTi.POSIXTime
 type Address = CA.Address
-type Beneficiary = CA.PaymentPubKeyHash
 type Common = ( beneficiary :: Beneficiary )
 type Donate = 
   { value :: Value

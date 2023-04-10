@@ -55,13 +55,13 @@ ownBeneficiary :: CM.Contract DT.Beneficiary
 ownBeneficiary = do
   ppkh <- CM.liftedM ("Failed to get beneficiary payment pub key hash")
     $ DA.head <$> CA.ownPaymentPubKeysHashes
-  pure ppkh
+  pure $ wrap ppkh
 
 donate :: DT.Donate -> CM.Contract DT.ContractResult
 donate dp = do
   validator <- liftEither validator
   let
-      pkh   = unwrap dp.beneficiary
+      pkh   = unwrap $ unwrap dp.beneficiary
       value = CV.lovelaceValueOf dp.value
       vhash = CS.validatorHash validator
       datum = wrap $ CPD.toData $ VestingDatum
@@ -96,7 +96,7 @@ reclaim p = do
       txInput = view CT._input utxo
       constraints :: CTC.TxConstraints Unit Unit
       constraints =    CTC.mustSpendScriptOutput txInput CPD.unitRedeemer
-                    <> CTC.mustBeSignedBy p.beneficiary
+                    <> CTC.mustBeSignedBy (unwrap p.beneficiary)
                     <> CTC.mustValidateIn (CTi.from now)
 
       lookups :: CSL.ScriptLookups CPD.PlutusData
