@@ -1,5 +1,6 @@
 module Donation.Contract
   ( ownWalletAddress
+  , ownBeneficiary
   , donate
   , reclaim
   ) where
@@ -49,6 +50,12 @@ instance CPD.ToData VestingDatum where
 ownWalletAddress :: String -> CM.Contract CA.Address
 ownWalletAddress s = CM.liftedM ("Failed to get " <> s <> " address") $
   DA.head <$> CA.getWalletAddresses
+
+ownBeneficiary :: CM.Contract DT.Beneficiary
+ownBeneficiary = do
+  ppkh <- CM.liftedM ("Failed to get beneficiary payment pub key hash")
+    $ DA.head <$> CA.ownPaymentPubKeysHashes
+  pure ppkh
 
 donate :: DT.Donate -> CM.Contract DT.ContractResult
 donate dp = do

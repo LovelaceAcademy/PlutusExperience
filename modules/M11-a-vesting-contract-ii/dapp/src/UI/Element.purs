@@ -80,4 +80,4 @@ resultToHelp :: forall t e. Show e => String -> F.FormFieldResult e t -> Either 
 resultToHelp str = case _ of
   F.NotValidated -> Right str
   F.Validating -> Right "validating..."
-  other -> maybe (Right "could not decipher error") Left $ V.showError other
+  other -> maybe (Right str) Left $ V.showError other
