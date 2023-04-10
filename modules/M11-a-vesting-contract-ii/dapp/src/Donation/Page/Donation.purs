@@ -54,7 +54,10 @@ newtype DonationForm r f = DonationForm
 
 derive instance Newtype (DonationForm r f) _
 
-data DonationFormMessage = PickBeneficiary | Now
+data DonationFormMessage =
+    PickBeneficiary
+  | Now
+  | Donate DT.Donate
 type DonationFormInput = 
   { beneficiary :: Maybe DT.Beneficiary
   , deadline :: Maybe DT.Deadline
@@ -119,7 +122,9 @@ donateForm = F.component (const formInput) $ F.defaultSpec
               [ HHE.onClick (const $ F.submit)
               ]
           ]
-        handleEvent _ = pure unit
+        handleEvent = case _ of
+                           F.Submitted form -> H.raise $ Donate (F.unwrapOutputFields form)
+                           _ -> pure unit
         handleAction = case _ of
           HandleInput i -> case i of
                                 { beneficiary: Just value } ->
@@ -162,6 +167,7 @@ donatePage cfg = H.mkComponent
           Now -> do
              deadline <- CMC.lift $ runContract DC.nowDeadline
              H.modify_ \s -> s { deadline = Just deadline }
+          Donate d -> void $ CMC.lift $ runContract $ DC.donate d
         render s = HH.div_
           [ HH.slot F._formless unit donateForm (Just s) HandleDonation
           ]
