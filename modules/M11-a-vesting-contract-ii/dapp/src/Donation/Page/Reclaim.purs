@@ -29,6 +29,7 @@ import Halogen.HTML.Events as HHE
 import Halogen.HTML.Properties as HHP
 import UI.Element as UIE
 import Validation as V
+import Type.Proxy (Proxy (Proxy))
 
 newtype ReclaimForm (r :: Row Type -> Type) f = ReclaimForm
   ( r
@@ -45,6 +46,9 @@ type ReclaimFormInput =
   { beneficiary :: Maybe DT.Beneficiary
   , donationTxId :: Maybe DT.TransactionId
   }
+
+_donationTxId :: Proxy "donationTxId"
+_donationTxId = Proxy
 
 data ReclaimFormAction =
     HandlePick
@@ -79,6 +83,16 @@ reclaimForm = F.component (const formInput) $ F.defaultSpec
                   ]
                   [ HH.text "Pick" ]  
               ]
+          , UIE.input
+              { label: "Donation transaction" 
+              , help: UIE.resultToHelp "Paste here the donation transaction hash" $
+                    ((F.getResult _donationTxId form) :: F.FormFieldResult V.FieldError _)
+              }
+              [ UIE.class_ "input-group-vertical"
+              , HHP.value $ F.getInput _donationTxId form
+              , HHE.onValueInput (F.setValidate _donationTxId)
+              ]
+              []
           , UIE.submit
               [ HHE.onClick (const $ F.submit)
               ]

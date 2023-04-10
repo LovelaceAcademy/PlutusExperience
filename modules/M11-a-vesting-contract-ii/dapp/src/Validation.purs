@@ -49,7 +49,7 @@ strIsBigInt = F.hoistFnE_ \str -> maybe (Left $ NotBigInt str) Right (DBI.fromSt
 
 
 strIsByteArray  :: forall form m. Monad m => F.Validation form m FieldError String CA.ByteArray 
-strIsByteArray = F.hoistFnE_ $ \str -> maybe (Left $ NotByteArray str) Right (CPBA.byteArrayFromAscii str)
+strIsByteArray = F.hoistFnE_ $ \str -> maybe (Left $ NotByteArray str) Right (CPBA.hexToByteArray str)
 
 hoistFnM_ :: forall form m e i o. Monad m => e -> (i -> Maybe o) -> F.Validation form m e i o
 hoistFnM_ err cb = F.hoistFnE_ (\i -> note err (cb i))
