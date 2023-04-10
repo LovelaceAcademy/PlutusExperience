@@ -14,6 +14,7 @@ import Contract.Prelude
   , pure
   , void
   , discard
+  , wrap
   )
 
 import Control.Monad.Trans.Class (lift)
@@ -140,7 +141,11 @@ suite = do
        void $ CTA.runChecks
         ( checks { donator, script } )
         ( lift $ withPaymentPubKeyHash donator
-            \beneficiary -> donate { beneficiary, deadline, value }
+            \b -> donate
+              { beneficiary: wrap b
+              , deadline
+              , value
+              }
         )
   test "beneficiary reclaim ADA in the contract, after the deadline" do
     let
@@ -164,13 +169,20 @@ suite = do
        let value = DBI.fromInt 10_000_000
        { txId: donationTxId } <- withKeyWallet w1 $ withPaymentPubKeyHash beneficiary \ppkh -> do
           deadline <- CC.currentTime
-          donate { value, beneficiary: ppkh, deadline }
+          donate
+            { value
+            , beneficiary: wrap ppkh
+            , deadline
+            }
        withKeyWallet w2 do
           script <- getScriptAddress
           void $ CTA.runChecks
             ( checks { beneficiary, script } )
             ( lift $ withPaymentPubKeyHash beneficiary
-                \ppkh -> reclaim { beneficiary: ppkh, donationTxId }
+                \ppkh -> reclaim
+                  { beneficiary: wrap ppkh
+                  , donationTxId
+                  }
             )
 
 main :: Effect Unit
