@@ -48,7 +48,7 @@ newtype DonationForm r f = DonationForm
   ( r
       ( beneficiary :: DT.BeneficiaryField f
       , deadline :: DT.DeadlineField f
-      , value :: f V.FieldError String DT.Value
+      , value :: DT.ValueField f
       )
   )
 
@@ -58,6 +58,7 @@ data DonationFormMessage = PickBeneficiary | Now
 type DonationFormInput = 
   { beneficiary :: Maybe DT.Beneficiary
   , deadline :: Maybe DT.Deadline
+  , value :: Maybe DT.Value
   }
 data DonationFormAction =
     HandlePick
@@ -105,6 +106,15 @@ donateForm = F.component (const formInput) $ F.defaultSpec
                   ]
                   [ HH.text "Now" ]
               ]
+          , UIE.input
+              { label: "Value"
+              , help: UIE.resultToHelp "Lovelaces" $
+                    ((F.getResult DT._value form) :: F.FormFieldResult V.FieldError _)
+              }
+              [ HHP.value $ F.getInput DT._value form
+              , HHE.onValueInput (F.setValidate DT._value)
+              ]
+              []
           ]
         handleEvent _ = pure unit
         handleAction = case _ of
@@ -134,6 +144,7 @@ donatePage cfg = H.mkComponent
   { initialState: const
       { beneficiary: Nothing
       , deadline: Nothing
+      , value: Nothing
       }
   , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
   , render: render
