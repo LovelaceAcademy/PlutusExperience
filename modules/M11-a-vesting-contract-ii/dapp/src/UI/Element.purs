@@ -2,6 +2,7 @@ module UI.Element
   ( class_
   , input
   , resultToHelp
+  , submit
   )
   where
 
@@ -32,6 +33,8 @@ type FieldConfig =
 class_ :: forall r t. String -> HH.IProp ("class" :: String | r) t
 class_ = HHP.class_ <<< HH.ClassName
 
+formControl :: forall w i. HH.Node DHI.HTMLdiv w i
+formControl props = HH.div $ [ class_ "form-control" ] <> props
 
 field :: forall w i. FieldConfig -> HH.Node DHI.HTMLdiv w i
 field { label, help } props children =
@@ -51,9 +54,8 @@ field { label, help } props children =
                           Left str -> helpError_ str
                           Right str ->  help_ str
       in
-      HH.div
-        ([ class_ "form-control" ] <> props)
-        (before <> children <> after)
+      formControl props $
+        before <> children <> after
 
 input :: forall w i. FieldConfig -> HH.Node DHI.HTMLinput w i
 input cfg props children = field
@@ -75,3 +77,12 @@ resultToHelp str = case _ of
   F.NotValidated -> Right str
   F.Validating -> Right "validating..."
   other -> maybe (Right str) Left $ V.showError other
+
+
+submit :: forall w i. HH.Leaf DHI.HTMLinput w i
+submit props = formControl []
+  [ HH.input
+      ([ class_ "btn btn-primary"
+      ,  HHP.type_ DHIIT.InputSubmit
+      ] <> props)
+  ]

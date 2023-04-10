@@ -115,6 +115,9 @@ donateForm = F.component (const formInput) $ F.defaultSpec
               , HHE.onValueInput (F.setValidate DT._value)
               ]
               []
+          , UIE.submit
+              [ HHE.onClick (const $ F.submit)
+              ]
           ]
         handleEvent _ = pure unit
         handleAction = case _ of
