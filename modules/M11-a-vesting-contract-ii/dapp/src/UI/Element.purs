@@ -29,11 +29,6 @@ type FieldConfig =
   , help :: Either String String
   }
 
-type InputConfig =
-  { placeholder :: String
-  , field :: FieldConfig
-  }
-
 class_ :: forall r t. String -> HH.IProp ("class" :: String | r) t
 class_ = HHP.class_ <<< HH.ClassName
 
@@ -60,18 +55,17 @@ field { label, help } props children =
         ([ class_ "form-control" ] <> props)
         (before <> children <> after)
 
-input :: forall w i. InputConfig -> HH.Node DHI.HTMLinput w i
+input :: forall w i. FieldConfig -> HH.Node DHI.HTMLinput w i
 input cfg props children = field
-  cfg.field
+  cfg
   []
   [ HH.div
       [ class_ "input-group" ]
       ([ HH.input
           ([ HHP.type_ DHIIT.InputText
-          ,  HHP.placeholder cfg.placeholder
           ,  either
               (const $ class_ "input input-bordered input-error")
-              (const $ class_ "input input-bordered") cfg.field.help
+              (const $ class_ "input input-bordered") cfg.help
           ] <> props) 
       ] <> children)
   ]

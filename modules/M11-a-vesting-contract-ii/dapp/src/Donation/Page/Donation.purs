@@ -67,16 +67,14 @@ donateForm = F.component formInput $ F.defaultSpec
         render { form } = HH.form
           [ UIE.class_ "max-w-sm mx-auto" ]
           [ UIE.input
-              { field:
-                  { label: "Address verification key hash"
-                  , help: UIE.resultToHelp "Paste the beneficiary verification hash" $
-                    (F.getResult _beneficiary form :: F.FormFieldResult V.FieldError _)
-                  }
-              , placeholder: "addr_vkh..."
+              { label: "Address verification key hash"
+              , help: UIE.resultToHelp "Paste the beneficiary verification hash" $
+                  (F.getResult _beneficiary form :: F.FormFieldResult V.FieldError _)
               }
               [ UIE.class_ "input-group-vertical"
               , HHP.value $ F.getInput _beneficiary form
               , HHE.onValueInput (F.setValidate _beneficiary)
+              , HHP.placeholder  "addr_vkh..."
               ]
               [ HH.button
                   [ UIE.class_ "btn"
