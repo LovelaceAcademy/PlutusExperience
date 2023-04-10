@@ -6,7 +6,6 @@ import Contract.Prelude
   , Unit
   , Maybe(Just)
   , Tuple(Tuple)
-  , void
   , bind
   )
 

@@ -9,7 +9,6 @@ import Contract.Prelude
   , (<<<)
   , class Newtype
   , bind
-  , void
   , unit
   , const
   , pure

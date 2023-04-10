@@ -9,39 +9,28 @@ import Contract.Prelude
   , (<$>)
   , (<<<)
   , (<>)
-  , Unit
   , Maybe (Nothing, Just)
-  , Either (Left)
   , pure
   , unit
   , wrap
   , unwrap
   , const
-  , void
-  , liftEffect
   , bind
-  , fromMaybe
   , show
   , foldMap
   )
 import Control.Monad.Cont as CMC
-import Contract.Address as CA
 import Contract.Monad as CM
-import Contract.Credential as CC
-import Contract.Log as CL
 import Contract.Prim.ByteArray as CPBA
-import Ctl.Internal.Serialization.Hash as CISH
 import Data.String.Read (read)
 import Data.BigInt as DBI
 import Effect.Aff (Aff)
-import Effect.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HHP
 import Halogen.HTML.Events as HHE
 import Formless as F
 import UI.Element as UIE
-import Type.Proxy (Proxy (Proxy))
 import Donation.Types as DT
 import Donation.Contract as DC
 import Validation as V
