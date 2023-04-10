@@ -64,8 +64,8 @@ input cfg props children = field
       ([ HH.input
           ([ HHP.type_ DHIIT.InputText
           ,  either
-              (const $ class_ "input input-bordered input-error")
-              (const $ class_ "input input-bordered") cfg.help
+              (const $ class_ "input input-bordered flex-1 input-error")
+              (const $ class_ "input input-bordered flex-1") cfg.help
           ] <> props) 
       ] <> children)
   ]
