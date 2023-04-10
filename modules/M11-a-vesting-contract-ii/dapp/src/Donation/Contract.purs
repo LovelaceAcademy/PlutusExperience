@@ -1,5 +1,6 @@
 module Donation.Contract
-  ( ownWalletAddress
+  ( nowDeadline
+  , ownWalletAddress
   , ownBeneficiary
   , donate
   , reclaim
@@ -46,6 +47,9 @@ instance CPD.ToData VestingDatum where
     [ CPD.toData beneficiary
     , CPD.toData deadline
     ]
+
+nowDeadline :: CM.Contract DT.Deadline
+nowDeadline = CC.currentTime
 
 ownWalletAddress :: String -> CM.Contract CA.Address
 ownWalletAddress s = CM.liftedM ("Failed to get " <> s <> " address") $

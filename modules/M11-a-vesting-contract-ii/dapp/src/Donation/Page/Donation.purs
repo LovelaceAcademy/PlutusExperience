@@ -29,6 +29,7 @@ import Contract.Credential as CC
 import Contract.Log as CL
 import Ctl.Internal.Serialization.Hash as CISH
 import Data.String.Read (read)
+import Data.BigInt as DBI
 import Effect.Aff (Aff)
 import Effect.Console (log)
 import Halogen as H
@@ -46,19 +47,21 @@ newtype DonationForm :: (Row Type -> Type) -> (Type -> Type -> Type -> Type) -> 
 newtype DonationForm r f = DonationForm
   ( r
       ( beneficiary :: DT.BeneficiaryField f
-      , deadline :: f V.FieldError String DT.Deadline
+      , deadline :: DT.DeadlineField f
       , value :: f V.FieldError String DT.Value
       )
   )
 
 derive instance Newtype (DonationForm r f) _
 
-data DonationFormMessage = PickBeneficiary
+data DonationFormMessage = PickBeneficiary | Now
 type DonationFormInput = 
   { beneficiary :: Maybe DT.Beneficiary
+  , deadline :: Maybe DT.Deadline
   }
 data DonationFormAction =
     HandlePick
+  | HandleNow
   | HandleInput DonationFormInput
 
 donateForm :: forall q s. F.Component DonationForm q s (Maybe DonationFormInput) DonationFormMessage Aff
@@ -88,14 +91,31 @@ donateForm = F.component (const formInput) $ F.defaultSpec
                   ]
                   [ HH.text "Pick" ]
               ]
+          , UIE.input
+              { label: "Deadline"
+              , help: UIE.resultToHelp "Unix timestamp (seconds since January 1st, 1970 at UTC)" $
+                    ((F.getResult DT._deadline form) :: F.FormFieldResult V.FieldError _)
+              }
+              [ HHP.value $ F.getInput DT._deadline form
+              , HHE.onValueInput (F.setValidate DT._deadline)
+              ]
+              [ HH.button
+                  [ UIE.class_ "btn"
+                  , HHE.onClick (const $ F.injAction HandleNow)
+                  ]
+                  [ HH.text "Now" ]
+              ]
           ]
         handleEvent _ = pure unit
         handleAction = case _ of
           HandleInput i -> case i of
-                                { beneficiary : Just value } ->
-                                  eval $ F.set DT._beneficiary $ show value
+                                { beneficiary: Just value } ->
+                                  eval $ F.setValidate DT._beneficiary $ show value
+                                { deadline: Just value } -> 
+                                  eval $ F.setValidate DT._deadline $ DBI.toString $ unwrap value
                                 _ -> pure unit
           HandlePick -> H.raise PickBeneficiary
+          HandleNow -> H.raise Now
           where
                 eval act = F.handleAction handleAction handleEvent act
         formInput =
@@ -111,7 +131,10 @@ data Action = HandleDonation DonationFormMessage
 
 donatePage :: forall q i o. CM.ContractParams -> H.Component q i o Aff
 donatePage cfg = H.mkComponent
-  { initialState: const { beneficiary: Nothing }
+  { initialState: const
+      { beneficiary: Nothing
+      , deadline: Nothing
+      }
   , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
   , render: render
   }
@@ -122,6 +145,9 @@ donatePage cfg = H.mkComponent
           PickBeneficiary -> do
              beneficiary <- CMC.lift $ runContract DC.ownBeneficiary
              H.modify_ \s -> s { beneficiary = Just beneficiary }
+          Now -> do
+             deadline <- CMC.lift $ runContract DC.nowDeadline
+             H.modify_ \s -> s { deadline = Just deadline }
         render s = HH.div_
           [ HH.slot F._formless unit donateForm (Just s) HandleDonation
           ]
