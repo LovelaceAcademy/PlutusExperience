@@ -26,9 +26,70 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 # Parameterized contracts (Plutus and CTL)
 
-## Plutus
+## The problem
 
-## CTL
+We already know Datums and Redeemers:
+
+- Datums are data attached to the transaction that are public in the blockchain (can be inspected) they are normally used to represent "contract state";
+- Redeemers are data sent to the validator to decide upon its spending according to the "contract state";
+
+```haskell
+validator :: MyDatum -> MyRedeemer -> ScriptContext -> Bool
+```
+
+But what if you want to inject information in the contract that should not be public in the blockchain?
+
+## Solution
+
+```haskell
+validator :: ContractParams -> MyDatum -> MyRedeemer -> ScriptContext -> Bool
+```
+
+`validator` is a function, you can just add as many arguments you need, if the validator has more than 3 arguments we say it's a parameterized contract.
+
+What happens behind the scene is that the contract hash will be computed as soon as we apply all missing parameters.
+
+```haskell
+-- ...
+data CorrectAnswer = CorrectAnswer Integer
+unstableMakeIsData ''CorrectAnswer
+
+data Password = Password Integer
+
+validator :: CorrectAnswer -> BuiltinData -> Password -> BuiltinData -> ()
+validator answer _ (Password n) _ | n == answer = ()
+validator _ _ _ = _shouldFail
+
+validator' :: Validator
+validator' = Validator $ fromCompiledCode $$(compile [|| wrap ||])
+  where
+    wrap = policy_ . unsafeFromBuiltinData
+```
+
+```purescript
+-- ... on CTL
+import Contract.Scripts (PlutusScript, ApplyArgsError, Validator, applyArgs)
+-- ...
+data CorrectAnswer = CorrectAnswer BigInt
+
+instance ToData CorrectAnswer where
+  toData (CorrectAnswer answer) = Constr zero
+    [ toData answer
+    ]
+
+-- ..
+
+applyError :: ApplyArgsError -> Error
+applyError err = error $ "Failed to apply arguments to the script: " <> show err
+
+-- ..
+
+applyScript :: CorrectAnswer -> PlutusScript -> Either Error PlutusScript
+applyScript answer ps = applyError `lmap` (applyArgs ps [toData answer])
+
+validator :: CorrectAnswer -> Either Error Validator
+validator answer =  wrap <$> (parseScript >>= applyScript answer)
+```
 
 # Values
 
