@@ -49,6 +49,8 @@ validator :: ContractParams -> MyDatum -> MyRedeemer -> ScriptContext -> Bool
 
 What happens behind the scene is that the contract hash will be computed as soon as we apply all missing parameters.
 
+## Solution - Plutus
+
 ```haskell
 -- ...
 data CorrectAnswer = CorrectAnswer Integer
@@ -65,6 +67,8 @@ validator' = Validator $ fromCompiledCode $$(compile [|| wrap ||])
   where
     wrap = policy_ . unsafeFromBuiltinData
 ```
+
+## Solution - CTL
 
 ```purescript
 -- ... on CTL
@@ -93,12 +97,48 @@ validator answer =  wrap <$> (parseScript >>= applyScript answer)
 
 # Values
 
-## Plutus
+## The problem
 
-## CTL
+Up so far we've used only `Ada` (`lovelace`) token. What if we need to use our own custom native token?
+
+## Solution
+
+```haskell
+newtype Value = Value { getValue :: Map.Map CurrencySymbol (Map.Map TokenName Integer) }
+
+newtype CurrencySymbol = CurrencySymbol { unCurrencySymbol :: BuiltinByteString }
+
+newtype TokenName = TokenName { unTokenName :: BuiltinByteString }
+
+newtype AssetClass = AssetClass { unAssetClass :: (CurrencySymbol, TokenName) }
+```
+
+The convention is to use the script hash hex that have minted the token as `CurrencySymbol`. `TokenName` is free to be used in any way (normally we use it as the token symbol (eg: Ada) or a name + unique id. In the case of `Ada`, its `CurrencySymbol` is an empty string, given `Ada` is the only asset that have been minted in the genesis block (there is no minting script for Ada).
+
+`Value` is also a monoid, you can append together many different `Value`s to produce different combinations.
 
 # Minting Policy
 
+## Explanation
+
+A minting policy is just a script that validates the mint transaction. The validator knows if it's a mint transaction through `ScriptContext`.
+
+```haskell
+data ScriptContext = ScriptContext { scriptContextTxInfo :: TxInfo
+                                   , scriptContextPurpose :: ScriptPurpose
+                                   }
+data ScriptPurpose = Minting CurrencySymbol
+                   | Spending TxOutRef
+                   | Rewarding StakingCredential
+                   | Certifying DCert
+```
+
 # NFT's
+
+## Explanation
+
+So far we've seen fungible native tokens (eg: Ada). We also can have non-fungible native tokens (or unique tokens of a max quantity of 1). It works in the same way as in `Value`s, but the quantity is always 1.
+
+[More on Native Tokens & NFT's](https://plutus-pioneer-program.readthedocs.io/en/latest/pioneer/week5.html)
 
 # Breakthrough: Building a NFT Minting website
