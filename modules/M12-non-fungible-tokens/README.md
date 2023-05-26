@@ -63,6 +63,7 @@ unstableMakeIsData ''CorrectAnswer
 
 data Password = Password Integer
 
+{-# INLINEABLE validator #-}
 validator :: CorrectAnswer -> BuiltinData -> Password -> BuiltinData -> ()
 validator answer _ (Password n) _ | n == answer = ()
 validator _ _ _ = _shouldFail
@@ -70,7 +71,7 @@ validator _ _ _ = _shouldFail
 validator' :: Validator
 validator' = Validator $ fromCompiledCode $$(compile [|| wrap ||])
   where
-    wrap = policy_ . unsafeFromBuiltinData
+    wrap = validator . unsafeFromBuiltinData
 ```
 
 ## Solution - CTL
