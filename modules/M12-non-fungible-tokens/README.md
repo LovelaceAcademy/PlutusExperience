@@ -24,6 +24,11 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 ## What you should know
 
+- [A Vesting Contract](modules/M11-a-vesting-contract-ii)
+- [Script Context](modules/M10-a-vesting-contract-i)
+- [Testing with Plutip](modules/M09-going-live)
+- [Off-chain with CTL](modules/M08-bring-it-on)
+
 # Parameterized contracts (Plutus and CTL)
 
 ## The problem
