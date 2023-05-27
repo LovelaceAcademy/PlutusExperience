@@ -2,6 +2,8 @@
   inputs.horizon-wave-ocean.url = "git+https://gitlab.homotopic.tech/horizon/wave-ocean/horizon-wave-ocean-platform";
   inputs.nixpkgs.follows = "horizon-wave-ocean/nixpkgs";
   inputs.utils.url = "github:ursi/flake-utils";
+  # to generate docs
+  inputs.plutus.url = "github:input-output-hk/plutus";
 
   outputs = { self, utils, ... }@inputs:
     utils.apply-systems
@@ -11,15 +13,15 @@
         #  horizon-platform is only supporting linux
         systems = [ "x86_64-linux" ];
       }
-      ({ pkgs, system, ... }:
+      ({ pkgs, system, ... }@context:
         let
           hsPkgs =
             with pkgs.haskell.lib;
             inputs.horizon-wave-ocean.legacyPackages.${system}.extend (hfinal: hprev:
               {
-                minting-policy = disableLibraryProfiling (hprev.developPackage "minting-policy" {
+                minting-policy = hprev.developPackage "minting-policy" {
                   root = ./.;
-                });
+                };
               });
           script = pkgs.runCommand "script"
             {
@@ -28,13 +30,26 @@
             ''minting-policy > $out'';
           script-check = pkgs.runCommand "script-check" { }
             ''cat ${script}; touch $out'';
+          serve-docs = import ./nix/serve-docs.nix inputs context {
+            inherit hsPkgs;
+            # TODO transform additionalPkgs in excludePkgs to reduce boilerplate
+            #  we could collect all entries from cabal build-depends
+            #  (maybe through hsPkgs)
+            additionalPkgs = [
+              # FIXME cardano-api doc is not building
+              #"cardano-api"
+              #"hor-plutus"
+            ];
+          };
         in
         {
           packages.default = hsPkgs.minting-policy;
           packages.script = script;
+          packages.serve-docs = serve-docs;
 
           devShells.default = hsPkgs.minting-policy.env.overrideAttrs (attrs: {
             buildInputs = with pkgs.haskell.packages.ghc8107; attrs.buildInputs ++ [
+              serve-docs
               cabal-install
               haskell-language-server
             ];
