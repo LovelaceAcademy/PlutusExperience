@@ -17,7 +17,9 @@
             with pkgs.haskell.lib;
             inputs.horizon-wave-ocean.legacyPackages.${system}.extend (hfinal: hprev:
               {
-                minting-policy = disableLibraryProfiling (hprev.callCabal2nix "minting-policy" ./. { });
+                minting-policy = disableLibraryProfiling (hprev.developPackage "minting-policy" {
+                  root = ./.;
+                });
               });
           script = pkgs.runCommand "script"
             {
@@ -32,8 +34,9 @@
           packages.script = script;
 
           devShells.default = hsPkgs.minting-policy.env.overrideAttrs (attrs: {
-            buildInputs = with pkgs; attrs.buildInputs ++ [
+            buildInputs = with pkgs.haskell.packages.ghc8107; attrs.buildInputs ++ [
               cabal-install
+              haskell-language-server
             ];
           });
 
