@@ -2499,21 +2499,6 @@
     },
     "flake-utils_25": {
       "locked": {
-        "lastModified": 1618217525,
-        "narHash": "sha256-WGrhVczjXTiswQaoxQ+0PTfbLNeOQM6M36zvLn78AYg=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "c6169a2772643c4a93a0b5ac1c61e296cba68544",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "flake-utils_26": {
-      "locked": {
         "lastModified": 1659877975,
         "narHash": "sha256-zllb8aq3YO3h8B/U0/J1WBgAL8EX5yWf5pMj3G0NAmc=",
         "owner": "numtide",
@@ -2526,13 +2511,28 @@
         "type": "indirect"
       }
     },
-    "flake-utils_27": {
+    "flake-utils_26": {
       "locked": {
         "lastModified": 1644229661,
         "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
         "owner": "numtide",
         "repo": "flake-utils",
         "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_27": {
+      "locked": {
+        "lastModified": 1618217525,
+        "narHash": "sha256-WGrhVczjXTiswQaoxQ+0PTfbLNeOQM6M36zvLn78AYg=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "c6169a2772643c4a93a0b5ac1c61e296cba68544",
         "type": "github"
       },
       "original": {
@@ -3701,7 +3701,7 @@
     },
     "horizon-wave-ocean": {
       "inputs": {
-        "flake-utils": "flake-utils_26",
+        "flake-utils": "flake-utils_25",
         "get-flake": "get-flake_2",
         "horizon-core": "horizon-core",
         "iohk-nix": "iohk-nix_5",
@@ -4476,7 +4476,7 @@
     },
     "lint-utils": {
       "inputs": {
-        "flake-utils": "flake-utils_27",
+        "flake-utils": "flake-utils_26",
         "nixpkgs": "nixpkgs_32"
       },
       "locked": {
@@ -4863,6 +4863,27 @@
         "owner": "input-output-hk",
         "repo": "cardano-memory-benchmark",
         "type": "github"
+      }
+    },
+    "minting-policy": {
+      "inputs": {
+        "horizon-wave-ocean": "horizon-wave-ocean",
+        "nixpkgs": [
+          "minting-policy",
+          "horizon-wave-ocean",
+          "nixpkgs"
+        ],
+        "utils": "utils_17"
+      },
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-mrKYrYYHOmb7XwQR446TmqRTFzRbTskzhAfINfWP4iE=",
+        "path": "../contract",
+        "type": "path"
+      },
+      "original": {
+        "path": "../contract",
+        "type": "path"
       }
     },
     "n2c": {
@@ -7720,6 +7741,7 @@
     "root": {
       "inputs": {
         "ctl-nix": "ctl-nix",
+        "minting-policy": "minting-policy",
         "nixpkgs": [
           "ctl-nix",
           "nixpkgs"
@@ -7728,8 +7750,7 @@
           "ctl-nix",
           "purs-nix"
         ],
-        "utils": "utils_17",
-        "vesting-contract": "vesting-contract"
+        "utils": "utils_18"
       }
     },
     "rust-analyzer-src": {
@@ -8361,7 +8382,7 @@
     },
     "utils_17": {
       "inputs": {
-        "flake-utils": "flake-utils_25"
+        "flake-utils": "flake-utils_27"
       },
       "locked": {
         "lastModified": 1658606827,
@@ -8513,27 +8534,6 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "type": "github"
-      }
-    },
-    "vesting-contract": {
-      "inputs": {
-        "horizon-wave-ocean": "horizon-wave-ocean",
-        "nixpkgs": [
-          "vesting-contract",
-          "horizon-wave-ocean",
-          "nixpkgs"
-        ],
-        "utils": "utils_18"
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-X9exnd7K40sscyUQZSbI7nIo99xyIiqqFH+oSXwresU=",
-        "path": "../contract",
-        "type": "path"
-      },
-      "original": {
-        "path": "../contract",
-        "type": "path"
       }
     },
     "yants": {

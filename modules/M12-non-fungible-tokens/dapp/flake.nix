@@ -4,7 +4,7 @@
     nixpkgs.follows = "ctl-nix/nixpkgs";
     purs-nix.follows = "ctl-nix/purs-nix";
     utils.url = "github:ursi/flake-utils";
-    vesting-contract.url = "path:../contract";
+    minting-policy.url = "path:../contract";
   };
 
   outputs = { self, utils, ... }@inputs:
@@ -25,7 +25,7 @@
     in
     utils.apply-systems
       { inherit inputs systems overlays; }
-      ({ system, pkgs, ctl-nix, vesting-contract, ... }:
+      ({ system, pkgs, ctl-nix, minting-policy, ... }:
         let
           # Use purs from CTL instead from nixpkgs
           purs = pkgs.easy-ps.purs-0_14_5;
@@ -36,11 +36,11 @@
           scripts = pkgs.runCommand
             "scripts"
             {
-              buildInputs = [ vesting-contract ];
+              buildInputs = [ minting-policy ];
             }
             ''
               mkdir -p $out/Scripts
-              vesting-contract > $out/Scripts/scriptV2.json
+              minting-policy > $out/Scripts/scriptV2.json
             '';
           ps = purs-nix.purs
             {

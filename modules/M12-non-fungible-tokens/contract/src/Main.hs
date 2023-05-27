@@ -21,7 +21,7 @@ import PlutusTx (compile, unstableMakeIsData)
 import Plutus.V2.Ledger.Api (Validator, ScriptContext, mkValidatorScript)
 import Plutus.Script.Utils.Typed (IsScriptContext (mkUntypedValidator))
 import Plutus.V2.Ledger.Api (Validator)
-import Vesting (validator)
+import Minting (validator)
 
 serialise :: Validator -> PlutusScript PlutusScriptV2
 serialise =

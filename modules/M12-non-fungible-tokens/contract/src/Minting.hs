@@ -3,7 +3,7 @@
 {-# LANGUAGE NoImplicitPrelude   #-}
 {-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE OverloadedStrings     #-}
-module Vesting (validator) where
+module Minting (validator) where
 
 import PlutusTx.Prelude
   ( ($)

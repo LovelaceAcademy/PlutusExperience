@@ -1,17 +1,17 @@
 cabal-version: 3.0
 
-name: vesting-contract
+name: minting-policy
 version: 1.0.0.2
 
 common lang
   ghc-options: -Wall 
 
-executable vesting-contract
+executable minting-policy
   import: lang
   hs-source-dirs: src
   main-is: Main.hs
   other-modules:
-    Vesting
+    Minting
   build-depends:
       base
     , bytestring

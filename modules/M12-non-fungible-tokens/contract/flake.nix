@@ -17,21 +17,21 @@
             with pkgs.haskell.lib;
             inputs.horizon-wave-ocean.legacyPackages.${system}.extend (hfinal: hprev:
               {
-                vesting-contract = disableLibraryProfiling (hprev.callCabal2nix "vesting-contract" ./. { });
+                minting-policy = disableLibraryProfiling (hprev.callCabal2nix "minting-policy" ./. { });
               });
           script = pkgs.runCommand "script"
             {
-              buildInputs = [ hsPkgs.vesting-contract ];
+              buildInputs = [ hsPkgs.minting-policy ];
             }
-            ''vesting-contract > $out'';
+            ''minting-policy > $out'';
           script-check = pkgs.runCommand "script-check" { }
             ''cat ${script}; touch $out'';
         in
         {
-          packages.default = hsPkgs.vesting-contract;
+          packages.default = hsPkgs.minting-policy;
           packages.script = script;
 
-          devShells.default = hsPkgs.vesting-contract.env.overrideAttrs (attrs: {
+          devShells.default = hsPkgs.minting-policy.env.overrideAttrs (attrs: {
             buildInputs = with pkgs; attrs.buildInputs ++ [
               cabal-install
             ];
