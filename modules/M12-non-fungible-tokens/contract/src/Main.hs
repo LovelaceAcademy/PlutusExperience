@@ -11,7 +11,7 @@ import Cardano.Api.Shelley
 import qualified Codec.Serialise as CS
 import qualified Data.ByteString.Lazy as DBL
 import qualified Data.ByteString.Short as DBS
-import Minting (validator)
+import Minting (policy)
 import Plutus.V2.Ledger.Api (Validator)
 import PlutusTx.Prelude
   ( Maybe (Nothing),
@@ -31,4 +31,4 @@ main :: IO ()
 main =
   DBL.putStr $
     textEnvelopeToJSON Nothing $
-      serialise validator
+      serialise policy

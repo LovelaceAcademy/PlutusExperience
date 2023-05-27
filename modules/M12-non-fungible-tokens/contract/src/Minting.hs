@@ -3,56 +3,54 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Minting (validator) where
+module Minting (policy) where
 
 import Plutus.Script.Utils.Typed (IsScriptContext (mkUntypedValidator))
-import Plutus.V1.Ledger.Interval (contains)
+import Plutus.V1.Ledger.Value (flattenValue)
 import Plutus.V2.Ledger.Api
-  ( POSIXTime,
-    PubKeyHash,
-    ScriptContext,
-    TxInfo,
+  ( ScriptContext,
+    TokenName,
+    TxOutRef,
     Validator,
-    from,
     mkValidatorScript,
     scriptContextTxInfo,
-    txInfoValidRange,
+    txInfoMint,
+    txOutRefId,
+    txOutRefIdx,
   )
-import Plutus.V2.Ledger.Contexts (txSignedBy)
+import Plutus.V2.Ledger.Contexts (spendsOutput)
 import PlutusTx
   ( compile,
     unstableMakeIsData,
   )
 import PlutusTx.Prelude
-  ( Bool,
+  ( Bool (False),
     traceIfFalse,
-    ($),
     (&&),
+    (==),
+    (>),
   )
 
-data VestingDatum = VestingDatum
-  { beneficiary :: PubKeyHash,
-    deadline :: POSIXTime
-  }
+data PolicyParams = PolicyParams TokenName TxOutRef
 
-unstableMakeIsData ''VestingDatum
+unstableMakeIsData ''PolicyParams
 
-{-# INLINEABLE validator_ #-}
-validator_ :: VestingDatum -> () -> ScriptContext -> Bool
-validator_ dat () ctx =
-  traceIfFalse "beneficiary's signature missing" signedByBeneficiary
-    && traceIfFalse "deadline not reached" deadlineReached
+{-# INLINEABLE policy_ #-}
+policy_ :: PolicyParams -> () -> ScriptContext -> Bool
+policy_ (PolicyParams tn txOut) () ctx =
+  traceIfFalse "Minting UTxO is not being consumed" spendsMintingUTxO
+    && traceIfFalse "Minting an invalid token amount" mintsExpectedAmount
   where
-    info :: TxInfo
+    ts = 1 -- NFT supply must be one
     info = scriptContextTxInfo ctx
+    -- because utxos refs are unique, when at least one output
+    -- matches one input we assume that the spent event is also unique
+    spendsMintingUTxO = spendsOutput info (txOutRefId txOut) (txOutRefIdx txOut)
+    mintsExpectedAmount = case flattenValue (txInfoMint info) of
+      [(_, tn', v)] | tn' == tn && v > 0 -> v == ts -- mint supply
+      _ -> False -- otherwise
 
-    signedByBeneficiary :: Bool
-    signedByBeneficiary = txSignedBy info $ beneficiary dat
-
-    deadlineReached :: Bool
-    deadlineReached = contains (from $ deadline dat) $ txInfoValidRange info
-
-validator :: Validator
-validator = mkValidatorScript $$(compile [||wrap||])
+policy :: Validator
+policy = mkValidatorScript $$(compile [||wrap||])
   where
-    wrap = mkUntypedValidator validator_
+    wrap = mkUntypedValidator policy_
