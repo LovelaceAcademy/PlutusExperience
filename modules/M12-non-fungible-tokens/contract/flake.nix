@@ -19,7 +19,7 @@
             with pkgs.haskell.lib;
             inputs.horizon-wave-ocean.legacyPackages.${system}.extend (hfinal: hprev:
               {
-                minting-policy = hprev.developPackage "minting-policy" {
+                minting-policy = hprev.developPackage {
                   root = ./.;
                 };
               });
