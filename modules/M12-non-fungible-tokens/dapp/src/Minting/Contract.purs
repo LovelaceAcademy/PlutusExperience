@@ -9,6 +9,7 @@ import Contract.Prelude
   ( ($)
   , (<>)
   , (<$>)
+  , (=<<)
   , Unit
   , Maybe(Nothing)
   , pure
@@ -30,6 +31,7 @@ import Contract.Time as CTi
 import Contract.Chain as CC
 import Contract.PlutusData as CPD
 import Contract.Numeric.BigNum as CNBN
+import Contract.Prim.ByteArray as CPBA
 import Data.Array as DA
 import Minting.Script (PolicyParams(PolicyParams), policy)
 import Minting.Types as MT
@@ -47,9 +49,14 @@ ownBeneficiary = do
     $ DA.head <$> CA.ownPaymentPubKeysHashes
   pure $ wrap ppkh
 
+mkTokenName :: String -> CM.Contract CV.TokenName
+mkTokenName n = CM.liftContractM "Failed to make token name"
+  $ CV.mkTokenName =<< CPBA.byteArrayFromAscii n
+
 mint :: CM.Contract MT.ContractResult
 mint = do
-  policy' <- liftEither $ policy (PolicyParams ?tn ?txOut)
+  tn <- mkTokenName "MyOwnNFT"
+  policy' <- liftEither $ policy (PolicyParams tn ?txOut)
   let
       constraints :: CTC.TxConstraints Unit Unit
       constraints =  CTC.mustMintValue ?value
