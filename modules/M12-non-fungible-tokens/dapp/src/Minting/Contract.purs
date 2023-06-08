@@ -31,19 +31,8 @@ import Contract.Chain as CC
 import Contract.PlutusData as CPD
 import Contract.Numeric.BigNum as CNBN
 import Data.Array as DA
-import Minting.Script (policy)
+import Minting.Script (PolicyParams(PolicyParams), policy)
 import Minting.Types as MT
-
-data VestingDatum = VestingDatum
-    { beneficiary :: CA.PubKeyHash
-    , deadline    :: CTi.POSIXTime
-    }
-
-instance CPD.ToData VestingDatum where
-  toData (VestingDatum { beneficiary, deadline }) = CPD.Constr CNBN.zero
-    [ CPD.toData beneficiary
-    , CPD.toData deadline
-    ]
 
 nowDeadline :: CM.Contract MT.Deadline
 nowDeadline = CC.currentTime
@@ -58,22 +47,17 @@ ownBeneficiary = do
     $ DA.head <$> CA.ownPaymentPubKeysHashes
   pure $ wrap ppkh
 
-mint :: MT.Mint -> CM.Contract MT.ContractResult
-donate dp = do
-  validator <- liftEither policy
+mint :: CM.Contract MT.ContractResult
+mint = do
+  policy' <- liftEither $ policy (PolicyParams ?tn ?txOut)
   let
-      pkh   = unwrap $ unwrap dp.beneficiary
-      value = CV.lovelaceValueOf dp.value
-      vhash = CS.validatorHash validator
-      datum = wrap $ CPD.toData $ VestingDatum
-        { beneficiary: pkh
-        , deadline: dp.deadline
-        }
       constraints :: CTC.TxConstraints Unit Unit
-      constraints = CTC.mustPayToScript vhash datum CTC.DatumWitness value
+      constraints =  CTC.mustMintValue ?value
+                  <> CTC.mustSpendPubKeyOutput ?txOut
 
       lookups :: CSL.ScriptLookups CPD.PlutusData
-      lookups = CSL.validator validator
+      lookups =  CSL.mintingPolicy (CS.PlutusMintingPolicy policy')
+              <> CSL.unspentOutputs ?utxos
   ubTx <- CM.liftedE $ CSL.mkUnbalancedTx lookups constraints
   bsTx <- CM.liftedE $ CT.balanceTx ubTx
   tx <- CT.signTransaction bsTx

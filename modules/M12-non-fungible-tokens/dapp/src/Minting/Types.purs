@@ -5,7 +5,6 @@ module Minting.Types
   , ContractResult
   , TransactionId
   , Common
-  , Mint
   , Address
   )
   where
@@ -19,11 +18,6 @@ import Minting.Types.Value
 type TransactionId = CT.TransactionHash
 type Address = CA.Address
 type Common = ( beneficiary :: Beneficiary )
-type Mint = 
-  { value :: Value
-  , deadline :: Deadline
-  | Common
-  }
 type ContractResult =
   { txId :: TransactionId
   , txFinalFee :: Value

@@ -137,7 +137,7 @@ suite = do
        script <- getScriptAddress
        void $ CTA.runChecks
         ( checks { visitor, script } )
-        ( lift $ withPaymentPubKeyHash visitor \b -> mint )
+        ( lift $ withPaymentPubKeyHash visitor \_ -> mint )
 
 main :: Effect Unit
 main = CTU.interruptOnSignal SIGINT =<< launchAff do
