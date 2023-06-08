@@ -4,6 +4,7 @@ module UI.Element
   , resultToHelp
   , submit
   , alert
+  , formControl
   )
   where
 

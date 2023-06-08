@@ -48,9 +48,11 @@ mintPage cfg = H.mkComponent
                   ]
                 )
                 (CPBA.byteArrayToHex <<< unwrap <$> txId)
-          <> [ HH.button
-                [ UIE.class_ "btn"
-                , HHE.onClick (const HandleMint)
-                ]
-                [ HH.text "Mint" ]
-              ] 
+          <> [ UIE.formControl []
+                [ HH.button
+                  [ UIE.class_ "btn btn-primary btn-lg"
+                  , HHE.onClick (const HandleMint)
+                  ]
+                  [ HH.text "Mint MyOwnNFT" ]
+                ] 
+             ]
