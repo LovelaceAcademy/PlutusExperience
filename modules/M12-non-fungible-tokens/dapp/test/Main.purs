@@ -55,20 +55,19 @@ import Effect.Aff
   )
 import Mote (test)
 import Test.Spec.Runner (defaultConfig)
-import Donation
+import Minting
   ( ContractResult
-  , validator
-  , donate
-  , reclaim
+  , policy
+  , mint
   )
-import Donation.Types
+import Minting.Types
   ( Address
   )
 
 type Labeled = CTA.Labeled
 type Contract = CM.Contract
 type Params = ( script :: Labeled Address )
-type DonationParams = { donator :: Labeled Address | Params  }
+type MintParams = { visitor :: Labeled Address | Params  }
 type RewardParams = { beneficiary :: Labeled Address | Params }
 
 config :: PlutipConfig
@@ -109,81 +108,36 @@ getOwnWalletLabeledAddress s = do
 
 getScriptAddress :: Contract (Labeled Address)
 getScriptAddress = do
-        validator' <- CM.liftContractE' "Failed to parse validator" $
-         CS.validatorHash <$> validator
+        policy' <- CM.liftContractE' "Failed to parse policy" $
+         CS.validatorHash <$> policy
         nId <- CA.getNetworkId
-        valAddr <- CM.liftContractM "Failed to get validator address" $
-          CA.validatorHashEnterpriseAddress nId validator'
+        valAddr <- CM.liftContractM "Failed to get policy address" $
+          CA.validatorHashEnterpriseAddress nId policy'
         pure $ CTA.label valAddr "script"
 
 suite :: TestPlanM ContractTest Unit
 suite = do
-  test "donator locks ADA, deadline and beneficiary in the contract" do
+  test "visitor mints the NFT" do
     let
       distribution :: InitialUTxOs
       distribution =
         [ DBI.fromInt 5_000_000
         , DBI.fromInt 2_000_000_000
         ]
-      checks :: DonationParams -> Array (CTA.ContractCheck ContractResult)
-      checks { donator, script } = let amount = DBI.fromInt 10_000_000 in
-        [ CTA.checkLossAtAddress donator
+      checks :: MintParams -> Array (CTA.ContractCheck ContractResult)
+      checks { visitor, script } = let amount = DBI.fromInt 10_000_000 in
+        [ CTA.checkLossAtAddress visitor
           \r -> do
              { txFinalFee } <- CM.liftContractM "contract did not provided value" r
              pure $ amount + txFinalFee
         , CTA.checkGainAtAddress' script amount
         ]
     withWallets distribution \kw -> withKeyWallet kw do
-       donator <- getOwnWalletLabeledAddress "donator"
+       visitor <- getOwnWalletLabeledAddress "visitor"
        script <- getScriptAddress
-       deadline <- CC.currentTime
-       let value = DBI.fromInt 10_000_000
        void $ CTA.runChecks
-        ( checks { donator, script } )
-        ( lift $ withPaymentPubKeyHash donator
-            \b -> donate
-              { beneficiary: wrap b
-              , deadline
-              , value
-              }
-        )
-  test "beneficiary reclaim ADA in the contract, after the deadline" do
-    let
-      distribution =
-           [ DBI.fromInt 20_000_000
-           , DBI.fromInt 5_000_000
-           ]
-        /\ [ DBI.fromInt 1_000_000
-           , DBI.fromInt 5_000_000
-           ]
-      checks :: RewardParams -> Array (CTA.ContractCheck ContractResult)
-      checks { beneficiary, script } = let amount = DBI.fromInt 10_000_000 in
-        [ CTA.checkGainAtAddress beneficiary
-          \r -> do
-             { txFinalFee } <- CM.liftContractM "contract did not provided any value" r
-             pure $ amount - txFinalFee
-        , CTA.checkLossAtAddress' script amount
-        ]
-    withWallets distribution \(w1 /\ w2) -> do
-       beneficiary <- withKeyWallet w2 $ getOwnWalletLabeledAddress "beneficiary"
-       let value = DBI.fromInt 10_000_000
-       { txId: donationTxId } <- withKeyWallet w1 $ withPaymentPubKeyHash beneficiary \ppkh -> do
-          deadline <- CC.currentTime
-          donate
-            { value
-            , beneficiary: wrap ppkh
-            , deadline
-            }
-       withKeyWallet w2 do
-          script <- getScriptAddress
-          void $ CTA.runChecks
-            ( checks { beneficiary, script } )
-            ( lift $ withPaymentPubKeyHash beneficiary
-                \ppkh -> reclaim
-                  { beneficiary: wrap ppkh
-                  , donationTxId
-                  }
-            )
+        ( checks { visitor, script } )
+        ( lift $ withPaymentPubKeyHash visitor \b -> mint )
 
 main :: Effect Unit
 main = CTU.interruptOnSignal SIGINT =<< launchAff do
