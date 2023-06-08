@@ -1,17 +1,19 @@
 module Minting.Script
   ( PolicyParams(..)
-  , policy )
+  , policy
+  )
   where
 
 import Contract.Prelude
   ( (>>=)
   , ($)
   , (<>)
+  , (<$>)
   , Maybe
   , show
   )
 import Contract.TextEnvelope (plutusScriptV2FromEnvelope, decodeTextEnvelope)
-import Contract.Scripts (PlutusScript, ApplyArgsError, applyArgs)
+import Contract.Scripts (PlutusScript, ApplyArgsError, MintingPolicy (PlutusMintingPolicy), applyArgs)
 import Contract.Value (TokenName)
 import Contract.PlutusData (class ToData, PlutusData(Constr), toData)
 import Contract.Numeric.BigNum (zero)
@@ -44,5 +46,5 @@ parseScript = note parseError parseScript'
 applyScript :: PolicyParams -> PlutusScript -> Either Error PlutusScript
 applyScript pp ps = applyError `lmap` (applyArgs ps [toData pp])
 
-policy :: PolicyParams -> Either Error PlutusScript
-policy pp = parseScript >>= applyScript pp
+policy :: PolicyParams -> Either Error MintingPolicy
+policy pp = PlutusMintingPolicy <$> (parseScript >>= applyScript pp)

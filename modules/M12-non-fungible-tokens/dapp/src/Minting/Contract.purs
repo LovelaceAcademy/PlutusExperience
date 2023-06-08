@@ -62,8 +62,7 @@ mint = do
   utxos <- CM.liftedM "Failed to get wallet utxos" CW.getWalletUtxos
   { key: txOut } <- CM.liftContractM "Failed to get the first utxo"
     $ DM.findMin utxos
-  policy' <- liftEither
-    $ CS.PlutusMintingPolicy <$> policy (PolicyParams tn txOut)
+  policy' <- liftEither $ policy (PolicyParams tn txOut)
   cur <- CM.liftContractM "Failed to get script currency symbol"
     $ CV.scriptCurrencySymbol policy'
   let
