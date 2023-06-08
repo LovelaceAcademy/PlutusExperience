@@ -32,7 +32,9 @@ import Contract.Chain as CC
 import Contract.PlutusData as CPD
 import Contract.Numeric.BigNum as CNBN
 import Contract.Prim.ByteArray as CPBA
+import Contract.Wallet as CW
 import Data.Array as DA
+import Data.Map as DM
 import Minting.Script (PolicyParams(PolicyParams), policy)
 import Minting.Types as MT
 
@@ -56,15 +58,17 @@ mkTokenName n = CM.liftContractM "Failed to make token name"
 mint :: CM.Contract MT.ContractResult
 mint = do
   tn <- mkTokenName "MyOwnNFT"
-  policy' <- liftEither $ policy (PolicyParams tn ?txOut)
+  utxos <- CM.liftedM "Failed to get wallet utxos" CW.getWalletUtxos
+  { key: txOut } <- CM.liftContractM "Failed to get the first utxo" $ DM.findMin utxos
+  policy' <- liftEither $ policy (PolicyParams tn txOut)
   let
       constraints :: CTC.TxConstraints Unit Unit
       constraints =  CTC.mustMintValue ?value
-                  <> CTC.mustSpendPubKeyOutput ?txOut
+                  <> CTC.mustSpendPubKeyOutput txOut
 
       lookups :: CSL.ScriptLookups CPD.PlutusData
       lookups =  CSL.mintingPolicy (CS.PlutusMintingPolicy policy')
-              <> CSL.unspentOutputs ?utxos
+              <> CSL.unspentOutputs utxos
   ubTx <- CM.liftedE $ CSL.mkUnbalancedTx lookups constraints
   bsTx <- CM.liftedE $ CT.balanceTx ubTx
   tx <- CT.signTransaction bsTx
