@@ -25,4 +25,4 @@ stories = FO.fromFoldable
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
-  HS.runStorybook { stories, logo: Just $ HH.text "A Minting Policy" } body
+  HS.runStorybook { stories, logo: Just $ HH.text "Non Fungible Tokens" } body
