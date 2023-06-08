@@ -3,6 +3,9 @@ module Minting.Contract
   , ownWalletAddress
   , ownBeneficiary
   , mint
+  , mkCurrencySymbol
+  , mkTokenName
+  , pickTxOut
   ) where
 
 import Contract.Prelude
@@ -31,6 +34,7 @@ import Contract.Time as CTi
 import Contract.Chain as CC
 import Contract.PlutusData as CPD
 import Contract.Numeric.BigNum as CNBN
+import Contract.Utxos as CU
 import Contract.Prim.ByteArray as CPBA
 import Contract.Wallet as CW
 import Data.Array as DA
@@ -56,15 +60,24 @@ mkTokenName :: String -> CM.Contract CV.TokenName
 mkTokenName n = CM.liftContractM "Failed to make token name"
   $ CV.mkTokenName =<< CPBA.byteArrayFromAscii n
 
+mkCurrencySymbol :: CS.MintingPolicy -> CM.Contract CV.CurrencySymbol
+mkCurrencySymbol p = CM.liftContractM "Failed to get script currency symbol"
+  $ CV.scriptCurrencySymbol p
+
+
+pickTxOut :: CU.UtxoMap -> CM.Contract CT.TransactionInput
+pickTxOut utxos = do
+  { key: txOut } <- CM.liftContractM "Failed to get the first utxo"
+    $ DM.findMin utxos
+  pure txOut
+
 mint :: CM.Contract MT.ContractResult
 mint = do
   tn <- mkTokenName "MyOwnNFT"
   utxos <- CM.liftedM "Failed to get wallet utxos" CW.getWalletUtxos
-  { key: txOut } <- CM.liftContractM "Failed to get the first utxo"
-    $ DM.findMin utxos
+  txOut <- pickTxOut utxos
   policy' <- liftEither $ policy (PolicyParams tn txOut)
-  cur <- CM.liftContractM "Failed to get script currency symbol"
-    $ CV.scriptCurrencySymbol policy'
+  cur <- mkCurrencySymbol policy'
   let
       value = CV.singleton cur tn (DBI.fromInt 1)
       constraints :: CTC.TxConstraints Unit Unit

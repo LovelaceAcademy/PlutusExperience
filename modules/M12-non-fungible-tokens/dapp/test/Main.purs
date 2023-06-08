@@ -11,12 +11,15 @@ import Contract.Prelude
   , bind
   , pure
   , void
+  , liftEither
   )
 
 import Control.Monad.Trans.Class (lift)
 import Contract.Address as CA
 import Contract.Config (emptyHooks)
 import Contract.Monad as CM
+import Contract.Value as CV
+import Contract.Wallet as CW
 import Contract.Test
   ( ContractTest
   , InitialUTxOs
@@ -39,6 +42,7 @@ import Data.Maybe (Maybe (Just, Nothing))
 import Data.Posix.Signal (Signal(SIGINT))
 import Data.Time.Duration (Seconds (Seconds))
 import Data.UInt as DU
+import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Aff
   ( Milliseconds(Milliseconds)
@@ -50,6 +54,11 @@ import Mote (test)
 import Test.Spec.Runner (defaultConfig)
 import Minting
   ( ContractResult
+  , PolicyParams (PolicyParams)
+  , mkCurrencySymbol
+  , mkTokenName
+  , pickTxOut
+  , policy
   , mint
   )
 import Minting.Types
@@ -58,7 +67,10 @@ import Minting.Types
 
 type Labeled = CTA.Labeled
 type Contract = CM.Contract
-type MintParams = { visitor :: Labeled Address }
+type MintParams = { visitor :: Labeled Address
+                  , curSymbol :: CV.CurrencySymbol
+                  , tokenName :: CV.TokenName
+                  }
 
 config :: PlutipConfig
 config =
@@ -106,16 +118,22 @@ suite = do
         , DBI.fromInt 2_000_000_000
         ]
       checks :: MintParams -> Array (CTA.ContractCheck ContractResult)
-      checks { visitor } =  
+      checks { visitor, curSymbol, tokenName } = let amount = DBI.fromInt 1 in
         [ CTA.checkLossAtAddress visitor
           \r -> do
              { txFinalFee } <- CM.liftContractM "contract did not provided value" r
              pure txFinalFee
+        , CTA.checkTokenGainAtAddress' visitor (curSymbol /\ tokenName /\ amount)
         ]
     withWallets distribution \kw -> withKeyWallet kw do
        visitor <- getOwnWalletLabeledAddress "visitor"
+       tokenName <- mkTokenName "MyOwnNFT"
+       utxos <- CM.liftedM "Failed to get wallet utxos" CW.getWalletUtxos
+       txOut <- pickTxOut utxos
+       policy' <- liftEither $ policy (PolicyParams tokenName txOut)
+       curSymbol <- mkCurrencySymbol policy'
        void $ CTA.runChecks
-        ( checks { visitor } )
+        ( checks { visitor, curSymbol, tokenName } )
         ( lift $ withPaymentPubKeyHash visitor \_ -> mint )
 
 main :: Effect Unit

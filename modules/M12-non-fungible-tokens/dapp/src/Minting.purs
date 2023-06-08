@@ -9,12 +9,17 @@ module Minting
 import Minting.Contract
   ( ownWalletAddress
   , mint
+  , mkCurrencySymbol
+  , mkTokenName
+  , pickTxOut
   )
 import Minting.Types
   ( ContractResult
   , TransactionId
   )
 import Minting.Script
-  ( policy )
+  ( PolicyParams (PolicyParams)
+  , policy
+  )
 import Minting.Page.Minting
   ( mintPage )
