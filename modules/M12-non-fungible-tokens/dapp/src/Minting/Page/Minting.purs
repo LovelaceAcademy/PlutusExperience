@@ -1,5 +1,5 @@
-module Donation.Page.Donation
-  ( donatePage
+module Minting.Page.Minting
+  ( mintPage
   )
   where
 
@@ -31,16 +31,16 @@ import Halogen.HTML.Properties as HHP
 import Halogen.HTML.Events as HHE
 import Formless as F
 import UI.Element as UIE
-import Donation.Types as DT
-import Donation.Contract as DC
+import Minting.Types as MT
+import Minting.Contract as MC
 import Validation as V
 
 newtype DonationForm :: (Row Type -> Type) -> (Type -> Type -> Type -> Type) -> Type
 newtype DonationForm r f = DonationForm
   ( r
-      ( beneficiary :: DT.BeneficiaryField f
-      , deadline :: DT.DeadlineField f
-      , value :: DT.ValueField f
+      ( beneficiary :: MT.BeneficiaryField f
+      , deadline :: MT.DeadlineField f
+      , value :: MT.ValueField f
       )
   )
 
@@ -49,10 +49,10 @@ derive instance Newtype (DonationForm r f) _
 data DonationFormMessage =
     PickBeneficiary
   | Now
-  | Donate DT.Donate
+  | Donate MT.Donate
 type DonationFormInput = 
-  { beneficiary :: Maybe DT.Beneficiary
-  , deadline :: Maybe DT.Deadline
+  { beneficiary :: Maybe MT.Beneficiary
+  , deadline :: Maybe MT.Deadline
   }
 data DonationFormAction =
     HandlePick
@@ -71,14 +71,14 @@ donateForm = F.component (const formInput) $ F.defaultSpec
         render { form } = HH.form
           [ UIE.class_ "max-w-sm mx-auto" ]
           [ UIE.input
-              { label: DT.beneficiary_label 
-              , help: UIE.resultToHelp DT.beneficiary_help $
-                  (F.getResult DT._beneficiary form :: F.FormFieldResult V.FieldError _)
+              { label: MT.beneficiary_label 
+              , help: UIE.resultToHelp MT.beneficiary_help $
+                  (F.getResult MT._beneficiary form :: F.FormFieldResult V.FieldError _)
               }
               [ UIE.class_ "input-group-vertical"
-              , HHP.value $ F.getInput DT._beneficiary form
-              , HHE.onValueInput (F.setValidate DT._beneficiary)
-              , HHP.placeholder DT.beneficiary_placeholder 
+              , HHP.value $ F.getInput MT._beneficiary form
+              , HHE.onValueInput (F.setValidate MT._beneficiary)
+              , HHP.placeholder MT.beneficiary_placeholder 
               ]
               [ HH.button
                   [ UIE.class_ "btn"
@@ -89,10 +89,10 @@ donateForm = F.component (const formInput) $ F.defaultSpec
           , UIE.input
               { label: "Deadline"
               , help: UIE.resultToHelp "Unix timestamp (seconds since January 1st, 1970 at UTC)" $
-                    ((F.getResult DT._deadline form) :: F.FormFieldResult V.FieldError _)
+                    ((F.getResult MT._deadline form) :: F.FormFieldResult V.FieldError _)
               }
-              [ HHP.value $ F.getInput DT._deadline form
-              , HHE.onValueInput (F.setValidate DT._deadline)
+              [ HHP.value $ F.getInput MT._deadline form
+              , HHE.onValueInput (F.setValidate MT._deadline)
               ]
               [ HH.button
                   [ UIE.class_ "btn"
@@ -103,10 +103,10 @@ donateForm = F.component (const formInput) $ F.defaultSpec
           , UIE.input
               { label: "Value"
               , help: UIE.resultToHelp "Lovelaces" $
-                    ((F.getResult DT._value form) :: F.FormFieldResult V.FieldError _)
+                    ((F.getResult MT._value form) :: F.FormFieldResult V.FieldError _)
               }
-              [ HHP.value $ F.getInput DT._value form
-              , HHE.onValueInput (F.setValidate DT._value)
+              [ HHP.value $ F.getInput MT._value form
+              , HHE.onValueInput (F.setValidate MT._value)
               ]
               []
           , UIE.submit
@@ -119,9 +119,9 @@ donateForm = F.component (const formInput) $ F.defaultSpec
         handleAction = case _ of
           HandleInput i -> case i of
                                 { beneficiary: Just value } ->
-                                  eval $ F.setValidate DT._beneficiary $ show value
+                                  eval $ F.setValidate MT._beneficiary $ show value
                                 { deadline: Just value } -> 
-                                  eval $ F.setValidate DT._deadline $ DBI.toString $ unwrap value
+                                  eval $ F.setValidate MT._deadline $ DBI.toString $ unwrap value
                                 _ -> pure unit
           HandlePick -> H.raise PickBeneficiary
           HandleNow -> H.raise Now
@@ -129,7 +129,7 @@ donateForm = F.component (const formInput) $ F.defaultSpec
                 eval act = F.handleAction handleAction handleEvent act
         formInput =
           { validators: DonationForm
-              { beneficiary: V.hoistFnM_ DT.beneficiary_error read
+              { beneficiary: V.hoistFnM_ MT.beneficiary_error read
               , value: V.strIsBigInt
               , deadline: wrap <$> V.strIsBigInt
               }
@@ -138,8 +138,8 @@ donateForm = F.component (const formInput) $ F.defaultSpec
 
 data Action = HandleDonation DonationFormMessage
 
-donatePage :: forall q i o. CM.ContractParams -> H.Component q i o Aff
-donatePage cfg = H.mkComponent
+mintPage :: forall q i o. CM.ContractParams -> H.Component q i o Aff
+mintPage cfg = H.mkComponent
   { initialState: const
       { beneficiary: Nothing
       , deadline: Nothing
@@ -153,13 +153,13 @@ donatePage cfg = H.mkComponent
         runContract = CM.runContract cfg
         handleAction (HandleDonation msg) = case msg of
           PickBeneficiary -> do
-             beneficiary <- CMC.lift $ runContract DC.ownBeneficiary
+             beneficiary <- CMC.lift $ runContract MC.ownBeneficiary
              H.modify_ \s -> s { beneficiary = Just beneficiary }
           Now -> do
-             deadline <- CMC.lift $ runContract DC.nowDeadline
+             deadline <- CMC.lift $ runContract MC.nowDeadline
              H.modify_ \s -> s { deadline = Just deadline }
           Donate d -> do
-             { txId } <-  CMC.lift $ runContract $ DC.donate d
+             { txId } <-  CMC.lift $ runContract $ MC.donate d
              H.modify_ \s -> s { txId = Just txId }
         render { beneficiary, deadline, txId } = HH.div_ $
              foldMap

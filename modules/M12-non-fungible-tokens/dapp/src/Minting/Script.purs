@@ -1,4 +1,4 @@
-module Donation.Script (validator) where
+module Minting.Script (policy) where
 
 import Contract.Prelude
   ( (<$>)
@@ -21,5 +21,5 @@ parseScript' = decodeTextEnvelope scriptV2 >>= plutusScriptV2FromEnvelope
 parseScript :: Either Error PlutusScript
 parseScript = note parseError parseScript'
 
-validator :: Either Error Validator
-validator = wrap <$> parseScript
+policy :: Either Error Validator
+policy = wrap <$> parseScript

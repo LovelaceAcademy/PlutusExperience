@@ -15,15 +15,14 @@ import Foreign.Object as FO
 import Halogen.Aff as HA
 import Halogen.HTML as HH
 import Halogen.Storybook as HS
-import Donation as D
+import Minting as M
 
 stories :: HS.Stories Aff
 stories = FO.fromFoldable
-  [ Tuple "Donate" $ HS.proxy (D.donatePage testnetEternlConfig)
-  , Tuple "Reclaim" $ HS.proxy (D.reclaimPage testnetEternlConfig)
+  [ Tuple "Mint" $ HS.proxy (M.mintPage testnetEternlConfig)
   ]
 
 main :: Effect Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
-  HS.runStorybook { stories, logo: Just $ HH.text "A Vesting Contract" } body
+  HS.runStorybook { stories, logo: Just $ HH.text "A Minting Policy" } body

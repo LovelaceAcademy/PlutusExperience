@@ -1,4 +1,4 @@
-module Donation.Types.Beneficiary
+module Minting.Types.Beneficiary
       ( Beneficiary (Beneficiary)
       , BeneficiaryField
       , _beneficiary

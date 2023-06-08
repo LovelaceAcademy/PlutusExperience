@@ -1,4 +1,4 @@
-module Donation.Types.Value
+module Minting.Types.Value
       ( Value
       , ValueField
       , _value

@@ -1,4 +1,4 @@
-module Donation.Types.Deadline
+module Minting.Types.Deadline
       ( Deadline
       , DeadlineField
       , _deadline
