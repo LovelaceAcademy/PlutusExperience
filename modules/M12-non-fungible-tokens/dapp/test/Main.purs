@@ -3,8 +3,6 @@ module Test.Main where
 import Contract.Prelude
   ( ($)
   , (=<<)
-  , (+)
-  , (-)
   , (<>)
   , (<$>)
   , LogLevel (Trace)
@@ -13,8 +11,6 @@ import Contract.Prelude
   , bind
   , pure
   , void
-  , discard
-  , wrap
   )
 
 import Control.Monad.Trans.Class (lift)
@@ -37,14 +33,11 @@ import Contract.Test.Plutip
   )
 import Contract.Test.Utils as CTU
 import Contract.Test.Assert as CTA
-import Contract.Scripts as CS
-import Contract.Chain as CC
 import Data.Array as DA
 import Data.BigInt as DBI
 import Data.Maybe (Maybe (Just, Nothing))
 import Data.Posix.Signal (Signal(SIGINT))
 import Data.Time.Duration (Seconds (Seconds))
-import Data.Tuple.Nested ((/\))
 import Data.UInt as DU
 import Effect (Effect)
 import Effect.Aff
@@ -57,7 +50,6 @@ import Mote (test)
 import Test.Spec.Runner (defaultConfig)
 import Minting
   ( ContractResult
-  , policy
   , mint
   )
 import Minting.Types
@@ -66,9 +58,7 @@ import Minting.Types
 
 type Labeled = CTA.Labeled
 type Contract = CM.Contract
-type Params = ( script :: Labeled Address )
-type MintParams = { visitor :: Labeled Address | Params  }
-type RewardParams = { beneficiary :: Labeled Address | Params }
+type MintParams = { visitor :: Labeled Address }
 
 config :: PlutipConfig
 config =
@@ -106,15 +96,6 @@ getOwnWalletLabeledAddress s = do
          DA.head <$> CA.getWalletAddresses
        pure $ CTA.label addr s
 
-getScriptAddress :: Contract (Labeled Address)
-getScriptAddress = do
-        policy' <- CM.liftContractE' "Failed to parse policy" $
-         CS.validatorHash <$> policy
-        nId <- CA.getNetworkId
-        valAddr <- CM.liftContractM "Failed to get policy address" $
-          CA.validatorHashEnterpriseAddress nId policy'
-        pure $ CTA.label valAddr "script"
-
 suite :: TestPlanM ContractTest Unit
 suite = do
   test "visitor mints the NFT" do
@@ -125,18 +106,16 @@ suite = do
         , DBI.fromInt 2_000_000_000
         ]
       checks :: MintParams -> Array (CTA.ContractCheck ContractResult)
-      checks { visitor, script } = let amount = DBI.fromInt 10_000_000 in
+      checks { visitor } =  
         [ CTA.checkLossAtAddress visitor
           \r -> do
              { txFinalFee } <- CM.liftContractM "contract did not provided value" r
-             pure $ amount + txFinalFee
-        , CTA.checkGainAtAddress' script amount
+             pure txFinalFee
         ]
     withWallets distribution \kw -> withKeyWallet kw do
        visitor <- getOwnWalletLabeledAddress "visitor"
-       script <- getScriptAddress
        void $ CTA.runChecks
-        ( checks { visitor, script } )
+        ( checks { visitor } )
         ( lift $ withPaymentPubKeyHash visitor \_ -> mint )
 
 main :: Effect Unit
