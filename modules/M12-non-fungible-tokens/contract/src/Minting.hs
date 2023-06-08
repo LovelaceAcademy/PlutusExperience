@@ -11,12 +11,14 @@ import Plutus.V2.Ledger.Api
   ( ScriptContext,
     TokenName,
     TxOutRef,
-    Validator,
+    Validator (Validator),
     mkValidatorScript,
     scriptContextTxInfo,
     txInfoMint,
     txOutRefId,
     txOutRefIdx,
+    unsafeFromBuiltinData,
+    fromCompiledCode
   )
 import Plutus.V2.Ledger.Contexts (spendsOutput)
 import PlutusTx
@@ -29,6 +31,8 @@ import PlutusTx.Prelude
     (&&),
     (==),
     (>),
+    ($),
+    (.)
   )
 
 data PolicyParams = PolicyParams TokenName TxOutRef
@@ -36,8 +40,8 @@ data PolicyParams = PolicyParams TokenName TxOutRef
 unstableMakeIsData ''PolicyParams
 
 {-# INLINEABLE policy_ #-}
-policy_ :: PolicyParams -> () -> ScriptContext -> Bool
-policy_ (PolicyParams tn txOut) () ctx =
+policy_ :: PolicyParams -> () -> () -> ScriptContext -> Bool
+policy_ (PolicyParams tn txOut) () () ctx =
   traceIfFalse "Minting UTxO is not being consumed" spendsMintingUTxO
     && traceIfFalse "Minting an invalid token amount" mintsExpectedAmount
   where
@@ -51,6 +55,6 @@ policy_ (PolicyParams tn txOut) () ctx =
       _ -> False -- otherwise
 
 policy :: Validator
-policy = mkValidatorScript $$(compile [||wrap||])
+policy = Validator $ fromCompiledCode $$(compile [||wrap||])
   where
-    wrap = mkUntypedValidator policy_
+    wrap = policy_ . unsafeFromBuiltinData
