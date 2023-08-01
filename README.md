@@ -76,10 +76,9 @@ To run anyting on this repository, you'll need to have:
 - Building a web app to test the contract
 - Integrating with a Wallet
 
-## Module 9 - Going Live
+## [Module 9 - Going Live](modules/M09-going-live)
 
 - Untyped vs Typed Validation Scripts
-- Running the contract in the testnet with cardano-cli
 - Testing with Plutip
 
 ## Module 10 - A Vesting Contract

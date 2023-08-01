@@ -1,0 +1,24 @@
+cabal-version: 3.6
+-- Instructions on how to write this file are in the Cabal
+-- documentation, which can be found here:
+--   http://haskell.org/cabal/release/cabal-latest/doc/users-guide/
+
+name: hello
+version: 1.0.0.2
+
+common lang
+  ghc-options: -Wall 
+
+executable hello
+  import: lang
+  hs-source-dirs: src
+  main-is: hello.hs
+  build-depends:
+      base
+    , bytestring
+    , cardano-api
+    , plutus-ledger-api
+    , plutus-tx
+    , plutus-tx-plugin
+    , plutus-script-utils
+    , serialise
