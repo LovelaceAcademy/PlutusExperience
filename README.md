@@ -81,21 +81,18 @@ To run anyting on this repository, you'll need to have:
 - Untyped vs Typed Validation Scripts
 - Testing with Plutip
 
-## Module 10 - A Vesting Contract
+## [Module 10 - A Vesting Contract I](modules/M10-a-vesting-contract)
 
-- Script Contexts
-- Datums
-- Redeemer
+- Script Context
 - Handling Time (Slots)
+- Building the contract and tests
+
+## Module 11 - A Vesting Contract II
+
 - Building the UI
 
-## Module 11 - High Ground
-
-- Metaprogramming in Haskell
-- Parameterized contracts
-- Running the parameterized contract in CTL
-
 ## Module 12 - (Non/)Fungible Tokens
+- Parameterized contracts (Plutus and CTL)
 - Values
 - Minting Policy
 - NFT's
