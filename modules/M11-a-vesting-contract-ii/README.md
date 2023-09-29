@@ -41,3 +41,7 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 ```bash
 cp -Rf modules/M10-a-vesting-contract-i modules/M11-a-vesting-contract-ii
 ```
+
+## Links
+
+- [DaisyUI](https://daisyui.com/)
