@@ -1,5 +1,5 @@
 ---
-title: M10 - A Vesting Contract
+title: M10 - A Vesting Contract I
 author: Walker Leite
 ---
 # Introduction
@@ -26,8 +26,6 @@ To run this presentation type (you will need [nix](https://nixos.org)):
 
 - Bulding smart contracts (module 6);
 - Cardano-Transaction-Lib (module 8);
-- Halogen (modules 7 and 8);
-- Although not required, [variants](https://github.com/natefaubion/purescript-variant) will be useful for [halogen-formless](https://github.com/thomashoneyman/purescript-halogen-formless).
 
 # Script Context
 
@@ -119,15 +117,15 @@ data Extended a = NegInf | Finite a	| PosInf
 ## Bootstrap
 
 ```
-mkdir modules/M10-a-vesting-contract/{contract,dapp}
+mkdir modules/M10-a-vesting-contract-i/{contract,dapp}
 
 (
-  cd modules/M10-a-vesting-contract/contract
+  cd modules/M10-a-vesting-contract-i/contract
   nix flake init -t github:LovelaceAcademy/nix-templates#hor-plutus
 )
 
 (
-  cd modules/M10-a-vesting-contract/dapp
+  cd modules/M10-a-vesting-contract-i/dapp
   nix flake init -t github:LovelaceAcademy/nix-templates#pix-ctl-full
 )
 ```

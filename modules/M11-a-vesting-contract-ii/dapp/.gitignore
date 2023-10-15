@@ -1,0 +1,7 @@
+/.psc-ide-port
+/result
+/output
+/node_modules
+/dist
+/bundle.js
+/generated-docs

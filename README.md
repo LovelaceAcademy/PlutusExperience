@@ -81,15 +81,15 @@ To run anyting on this repository, you'll need to have:
 - Untyped vs Typed Validation Scripts
 - Testing with Plutip
 
-## [Module 10 - A Vesting Contract I](modules/M10-a-vesting-contract)
+## [Module 10 - A Vesting Contract I](modules/M10-a-vesting-contract-i)
 
 - Script Context
 - Handling Time (Slots)
 - Building the contract and tests
 
-## Module 11 - A Vesting Contract II
+## [Module 11 - A Vesting Contract II](modules/M11-a-vesting-contract-ii)
 
-- Building the UI
+- Building the Vesting Contract UI
 
 ## Module 12 - (Non/)Fungible Tokens
 - Parameterized contracts (Plutus and CTL)
