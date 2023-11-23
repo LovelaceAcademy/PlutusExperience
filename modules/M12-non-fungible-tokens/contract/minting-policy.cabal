@@ -1,0 +1,23 @@
+cabal-version: 3.0
+
+name: minting-policy
+version: 1.0.0.2
+
+common lang
+  ghc-options: -Wall 
+
+executable minting-policy
+  import: lang
+  hs-source-dirs: src
+  main-is: Main.hs
+  other-modules:
+    Minting
+  build-depends:
+      base
+    , bytestring
+    , cardano-api
+    , plutus-ledger-api
+    , plutus-tx
+    , plutus-tx-plugin
+    , plutus-script-utils
+    , serialise

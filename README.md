@@ -91,7 +91,7 @@ To run anyting on this repository, you'll need to have:
 
 - Building the Vesting Contract UI
 
-## Module 12 - (Non/)Fungible Tokens
+## [Module 12 - (Non/)Fungible Tokens](modules/M12-non-fungible-tokens)
 - Parameterized contracts (Plutus and CTL)
 - Values
 - Minting Policy
